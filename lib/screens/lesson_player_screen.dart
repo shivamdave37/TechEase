@@ -20,48 +20,179 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
     if (steps.isEmpty) {
       return Scaffold(
         appBar: AppBar(title: Text(widget.lesson.title)),
-        body: const Center(child: Text('No steps available.')),
+        body: const Center(
+          child: Text('No steps available for this lesson.', style: AppDesign.body),
+        ),
       );
     }
+
     final step = steps[_currentIndex];
+    final progress = (_currentIndex + 1) / steps.length;
+
     return Scaffold(
-      appBar: AppBar(title: Text(widget.lesson.title)),
-      body: Padding(
-        padding: const EdgeInsets.all(AppDesign.spaceMedium),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: Column(
+      appBar: AppBar(
+        title: Text(widget.lesson.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(AppDesign.spaceMedium),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Step Indicator & Progress Bar
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
-                    child: Image.asset(step.image, fit: BoxFit.contain, errorBuilder: (_, __, ___) => const Icon(Icons.broken_image, size: 120)),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade50,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.blue.shade300),
+                    ),
+                    child: Text(
+                      'Step ${_currentIndex + 1} of ${steps.length}',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue.shade900,
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: AppDesign.spaceSmall),
-                  Text(step.text, style: AppDesign.body.copyWith(fontSize: 22), textAlign: TextAlign.center),
+                  Text(
+                    '${(progress * 100).toInt()}% Done',
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black54),
+                  ),
                 ],
               ),
-            ),
-            const SizedBox(height: AppDesign.spaceMedium),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _NavButton(label: 'Back', enabled: _currentIndex > 0, onPressed: _currentIndex > 0 ? () => setState(() => _currentIndex--) : null),
-                _NavButton(label: 'Repeat', onPressed: _repeatInstruction),
-                _NavButton(label: 'Next', enabled: _currentIndex < steps.length - 1, onPressed: _currentIndex < steps.length - 1 ? () => setState(() => _currentIndex++) : null),
-              ],
-            ),
-            const SizedBox(height: AppDesign.spaceSmall),
-            ElevatedButton(
-              onPressed: _showConfusedDialog,
-              child: const Text('Still Confused?'),
-            ),
-            const SizedBox(height: AppDesign.spaceSmall),
-            ElevatedButton(
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => PracticeScreen(lesson: widget.lesson))),
-              child: const Text('Practice Mode'),
-            ),
-          ],
+              const SizedBox(height: 8),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: LinearProgressIndicator(
+                  value: progress,
+                  minHeight: 8,
+                  backgroundColor: Colors.grey.shade200,
+                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.green),
+                ),
+              ),
+              const SizedBox(height: AppDesign.spaceMedium),
+
+              // Image & Instruction text area
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.grey.shade300),
+                  ),
+                  padding: const EdgeInsets.all(AppDesign.spaceSmall),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.asset(
+                            step.image,
+                            fit: BoxFit.contain,
+                            errorBuilder: (_, __, ___) => const Center(
+                              child: Icon(Icons.broken_image, size: 80, color: Colors.grey),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: AppDesign.spaceSmall),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade50,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          step.text,
+                          style: AppDesign.body.copyWith(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            height: 1.3,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: AppDesign.spaceMedium),
+
+              // Navigation Controls: Back, Repeat, Next
+              Row(
+                children: [
+                  Expanded(
+                    child: _NavButton(
+                      label: 'Back',
+                      icon: Icons.arrow_back,
+                      enabled: _currentIndex > 0,
+                      onPressed: _currentIndex > 0 ? () => setState(() => _currentIndex--) : null,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _NavButton(
+                      label: 'Repeat',
+                      icon: Icons.replay,
+                      onPressed: _repeatInstruction,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _NavButton(
+                      label: 'Next',
+                      icon: Icons.arrow_forward,
+                      enabled: _currentIndex < steps.length - 1,
+                      onPressed: _currentIndex < steps.length - 1 ? () => setState(() => _currentIndex++) : null,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+
+              // Still Confused? & Practice Mode Buttons
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.amber.shade700,
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size(0, 52),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                      onPressed: _showConfusedDialog,
+                      icon: const Icon(Icons.help_outline, size: 24),
+                      label: const Text('Still Confused?', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green.shade700,
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size(0, 52),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => PracticeScreen(lesson: widget.lesson)),
+                      ),
+                      icon: const Icon(Icons.sports_esports, size: 24),
+                      label: const Text('Practice Mode', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -72,10 +203,46 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Let me help'),
-        content: Text('Try this one small action:\n\n$instruction', style: AppDesign.body),
+        title: Row(
+          children: const [
+            Icon(Icons.support_agent, color: Colors.blue, size: 30),
+            SizedBox(width: 10),
+            Text('Let me help'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Take a breath. You are doing great! Here is what to do for this step in simpler words:',
+              style: TextStyle(fontSize: 18),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.amber.shade50,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.amber.shade300),
+              ),
+              child: Text(
+                '👉 $instruction',
+                style: const TextStyle(fontSize: 19, fontWeight: FontWeight.bold, color: Colors.black87),
+              ),
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              'You can also tap "Practice Mode" below to try selecting the step on your own without any worry of making mistakes.',
+              style: TextStyle(fontSize: 16, color: Colors.black54),
+            ),
+          ],
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close')),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('I Understand', style: TextStyle(fontSize: 18)),
+          ),
         ],
       ),
     );
@@ -85,27 +252,52 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Current step'),
-        content: Text(widget.lesson.steps[_currentIndex].text, style: AppDesign.body),
-        actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close'))],
+        title: Row(
+          children: const [
+            Icon(Icons.volume_up, color: Colors.blue, size: 28),
+            SizedBox(width: 8),
+            Text('Repeat Step'),
+          ],
+        ),
+        content: Text(
+          widget.lesson.steps[_currentIndex].text,
+          style: AppDesign.body.copyWith(fontSize: 20),
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Got it', style: TextStyle(fontSize: 18)),
+          ),
+        ],
       ),
     );
   }
-
 }
 
 class _NavButton extends StatelessWidget {
   final String label;
+  final IconData icon;
   final VoidCallback? onPressed;
   final bool enabled;
-  const _NavButton({required this.label, this.onPressed, this.enabled = true});
+
+  const _NavButton({
+    required this.label,
+    required this.icon,
+    this.onPressed,
+    this.enabled = true,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
+    return ElevatedButton.icon(
       onPressed: enabled ? onPressed : null,
-      style: ElevatedButton.styleFrom(minimumSize: const Size(88, AppDesign.minTouchTarget), padding: const EdgeInsets.symmetric(horizontal: 12)),
-      child: Text(label, style: AppDesign.button),
+      icon: Icon(icon, size: 20),
+      label: Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+      style: ElevatedButton.styleFrom(
+        minimumSize: const Size(0, 52),
+        padding: const EdgeInsets.symmetric(horizontal: 6),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
     );
   }
 }

@@ -43,59 +43,132 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth > 600;
+    final crossAxisCount = isTablet ? 3 : 2;
+    final childAspectRatio = isTablet ? 1.0 : 0.82;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Welcome')), // Simple welcome
-      body: Padding(
-        padding: const EdgeInsets.all(AppDesign.spaceMedium),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Learn how to use your smartphone', style: AppDesign.headline),
-            const SizedBox(height: AppDesign.spaceMedium),
-            Expanded(
-              child: _loading
-                  ? const Center(child: CircularProgressIndicator())
-                  : _loadError != null
-                      ? Center(child: Column(mainAxisSize: MainAxisSize.min, children: [Text(_loadError!, style: AppDesign.body, textAlign: TextAlign.center), const SizedBox(height: 16), ElevatedButton(onPressed: () { setState(() { _loading = true; _loadError = null; }); _loadCategories(); }, child: const Text('Try again'))]))
-                  : _categories.isEmpty
-                      ? const Center(child: Text('No learning categories are available yet.', style: AppDesign.body, textAlign: TextAlign.center))
-                  : GridView.builder(
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        mainAxisSpacing: AppDesign.spaceMedium,
-                        crossAxisSpacing: AppDesign.spaceMedium,
-                        childAspectRatio: 1,
-                      ),
-                      itemCount: _categories.length,
-                      itemBuilder: (context, i) {
-                        final cat = _categories[i];
-                        return Card(
-                          elevation: 2,
-                          child: InkWell(
-                          borderRadius: BorderRadius.circular(4),
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => CategoryScreen(category: cat)),
-                          ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(AppDesign.spaceSmall),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Expanded(child: Image.asset(cat.imageAsset, fit: BoxFit.contain, errorBuilder: (_, __, ___) => const Icon(Icons.smartphone, size: 56, semanticLabel: 'Smartphone'))),
-                                  const SizedBox(height: AppDesign.spaceSmall),
-                                  Text(cat.title, style: AppDesign.title, textAlign: TextAlign.center),
-                                  const SizedBox(height: AppDesign.spaceSmall),
-                                  Text(cat.description, style: AppDesign.body, textAlign: TextAlign.center, maxLines: 2, overflow: TextOverflow.ellipsis),
-                                ],
-                              ),
+      appBar: AppBar(
+        title: const Text('Welcome', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
+        centerTitle: false,
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(AppDesign.spaceMedium),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Learn how to use your smartphone',
+                style: AppDesign.headline,
+              ),
+              const SizedBox(height: AppDesign.spaceSmall),
+              const Text(
+                'Tap any topic below to begin with easy step-by-step guidance.',
+                style: AppDesign.body,
+              ),
+              const SizedBox(height: AppDesign.spaceMedium),
+              Expanded(
+                child: _loading
+                    ? const Center(child: CircularProgressIndicator())
+                    : _loadError != null
+                        ? Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(_loadError!, style: AppDesign.body, textAlign: TextAlign.center),
+                                const SizedBox(height: 16),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _loading = true;
+                                      _loadError = null;
+                                    });
+                                    _loadCategories();
+                                  },
+                                  child: const Text('Try again'),
+                                ),
+                              ],
                             ),
-                          ),
-                        );
-                      },
-                    ),
-            ),
-          ],
+                          )
+                        : _categories.isEmpty
+                            ? const Center(
+                                child: Text(
+                                  'No learning categories are available yet.',
+                                  style: AppDesign.body,
+                                  textAlign: TextAlign.center,
+                                ),
+                              )
+                            : GridView.builder(
+                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: crossAxisCount,
+                                  mainAxisSpacing: AppDesign.spaceMedium,
+                                  crossAxisSpacing: AppDesign.spaceMedium,
+                                  childAspectRatio: childAspectRatio,
+                                ),
+                                itemCount: _categories.length,
+                                itemBuilder: (context, i) {
+                                  final cat = _categories[i];
+                                  return Card(
+                                    elevation: 2,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: InkWell(
+                                      borderRadius: BorderRadius.circular(12),
+                                      onTap: () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (_) => CategoryScreen(category: cat)),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(AppDesign.spaceSmall),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Expanded(
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(4.0),
+                                                child: Image.asset(
+                                                  cat.imageAsset,
+                                                  fit: BoxFit.contain,
+                                                  errorBuilder: (_, __, ___) => const Icon(
+                                                    Icons.smartphone,
+                                                    size: 56,
+                                                    semanticLabel: 'Smartphone',
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(height: AppDesign.spaceSmall),
+                                            Text(
+                                              cat.title,
+                                              style: AppDesign.title,
+                                              textAlign: TextAlign.center,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              cat.description,
+                                              style: TextStyle(
+                                                fontSize: 15,
+                                                color: Colors.grey[700],
+                                              ),
+                                              textAlign: TextAlign.center,
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+              ),
+            ],
+          ),
         ),
       ),
     );
