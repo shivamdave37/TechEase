@@ -36,6 +36,15 @@ class ElderApp extends StatelessWidget {
             title: localization.tr('app_title'),
             debugShowCheckedModeBanner: false,
             theme: accessibility.themeData,
+            builder: (context, child) {
+              final mediaQuery = MediaQuery.of(context);
+              return MediaQuery(
+                data: mediaQuery.copyWith(
+                  textScaler: TextScaler.linear(accessibility.fontScale),
+                ),
+                child: child!,
+              );
+            },
             home: const MainNavigationShell(),
           );
         },

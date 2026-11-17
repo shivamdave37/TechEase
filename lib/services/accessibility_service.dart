@@ -24,6 +24,16 @@ class AccessibilityService extends ChangeNotifier {
     }
   }
 
+  void increaseFont() {
+    final next = (_fontScale + 0.1).clamp(0.85, 1.35);
+    setFontScale(double.parse(next.toStringAsFixed(2)));
+  }
+
+  void decreaseFont() {
+    final prev = (_fontScale - 0.1).clamp(0.85, 1.35);
+    setFontScale(double.parse(prev.toStringAsFixed(2)));
+  }
+
   void toggleHighContrast(bool enabled) {
     _highContrast = enabled;
     notifyListeners();

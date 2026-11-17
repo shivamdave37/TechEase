@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 import '../../design_system.dart';
 
@@ -183,12 +184,24 @@ class ShareToPhoneDialog extends StatelessWidget {
                                     padding: const EdgeInsets.symmetric(vertical: 12),
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                   ),
-                                  icon: const Icon(Icons.share, size: 20),
-                                  label: const Text('Share Link', style: TextStyle(fontWeight: FontWeight.bold)),
-                                  onPressed: () {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('Link copied to clipboard! Paste it into WhatsApp.')),
-                                    );
+                                  icon: const Icon(Icons.copy, size: 20),
+                                  label: const Text('Copy Link to Clipboard', style: TextStyle(fontWeight: FontWeight.bold)),
+                                  onPressed: () async {
+                                    await Clipboard.setData(ClipboardData(text: publicWebUrl));
+                                    if (context.mounted) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          backgroundColor: Colors.green,
+                                          content: Row(
+                                            children: [
+                                              Icon(Icons.check_circle, color: Colors.white),
+                                              SizedBox(width: 8),
+                                              Text('Link successfully copied! You can now paste it in WhatsApp or SMS.'),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    }
                                   },
                                 ),
                               ),

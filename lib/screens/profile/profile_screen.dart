@@ -193,25 +193,70 @@ class ProfileScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Text Size Slider
+                    // Text Size Controls
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(loc.tr('text_size'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                        Text('${(accessibility.fontScale * 100).toInt()}%', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blue)),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.blue.shade100,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            '${(accessibility.fontScale * 100).toInt()}% Active',
+                            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.blue.shade900),
+                          ),
+                        ),
                       ],
                     ),
-                    Slider(
-                      value: accessibility.fontScale,
-                      min: 0.85,
-                      max: 1.35,
-                      divisions: 5,
-                      label: '${(accessibility.fontScale * 100).toInt()}%',
-                      onChanged: (val) => accessibility.setFontScale(val),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        // Smaller A- Button
+                        IconButton.filledTonal(
+                          tooltip: 'Make text smaller',
+                          icon: const Text('A-', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          onPressed: () => accessibility.decreaseFont(),
+                        ),
+                        Expanded(
+                          child: Slider(
+                            value: accessibility.fontScale,
+                            min: 0.85,
+                            max: 1.35,
+                            divisions: 5,
+                            label: '${(accessibility.fontScale * 100).toInt()}%',
+                            onChanged: (val) => accessibility.setFontScale(val),
+                          ),
+                        ),
+                        // Larger A+ Button
+                        IconButton.filledTonal(
+                          tooltip: 'Make text larger',
+                          icon: const Text('A+', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                          onPressed: () => accessibility.increaseFont(),
+                        ),
+                      ],
                     ),
-                    Text(
-                      'Preview: This is how instructions will look on your screen.',
-                      style: TextStyle(fontSize: 16 * accessibility.fontScale, color: Colors.black87),
+                    Container(
+                      margin: const EdgeInsets.only(top: 4),
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.check_circle, color: Colors.green, size: 20),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Live: Text size changes across the entire app immediately.',
+                              style: TextStyle(fontSize: 14 * accessibility.fontScale, fontWeight: FontWeight.w600, color: Colors.black87),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     const Divider(height: 28),
 
