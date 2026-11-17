@@ -1,0 +1,21 @@
+name: elder_smartphone_learning_app
+description: Elderly-friendly smartphone learning app – Stage 1
+publish_to: "none"
+version: 0.1.0+1
+environment:
+  sdk: ">=2.19.0 <4.0.0"
+  flutter: ">=3.10.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  test: any
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/data/categories.json

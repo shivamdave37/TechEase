@@ -1,0 +1,29 @@
+[
+  {
+    "id": "cat1",
+    "title": "WhatsApp",
+    "description": "Learn how to use WhatsApp for messaging.",
+    "imageAsset": "assets/images/whatsapp.png",
+    "tasks": [
+      {
+        "id": "task1",
+        "title": "Send a WhatsApp Message",
+        "description": "Step‑by‑step guide to send a message.",
+        "lessons": [
+          {
+            "id": "lesson1",
+            "title": "Open WhatsApp",
+            "description": "Open the app and send a message.",
+            "steps": [
+              {"order":1,"text":"Tap the WhatsApp icon on the home screen.","image":"assets/images/whatsapp_step1.png"},
+              {"order":2,"text":"Tap the chat icon at the bottom right.","image":"assets/images/whatsapp_step2.png"},
+              {"order":3,"text":"Select a contact from the list.","image":"assets/images/whatsapp_step3.png"},
+              {"order":4,"text":"Type your message in the text box.","image":"assets/images/whatsapp_step4.png"},
+              {"order":5,"text":"Press the send (paper‑plane) button.","image":"assets/images/whatsapp_step5.png"}
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
