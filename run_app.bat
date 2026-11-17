@@ -43,7 +43,7 @@ if defined PYTHON_EXE (
     start /b "" powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0serve.ps1"
 )
 
-timeout /t 2 /nobreak >nul
+ping 127.0.0.1 -n 3 >nul
 echo Opening application in default browser...
 start http://localhost:8080
 
