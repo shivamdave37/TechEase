@@ -8,6 +8,7 @@ import '../../services/localization_service.dart';
 import '../../services/moderation_service.dart';
 import '../../services/user_service.dart';
 import '../auth/phone_login_screen.dart';
+import '../share/share_to_phone_dialog.dart';
 import 'moderation_screen.dart';
 import 'privacy_settings_screen.dart';
 
@@ -279,6 +280,14 @@ class ProfileScreen extends StatelessWidget {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
               child: Column(
                 children: [
+                  ListTile(
+                    leading: const Icon(Icons.phone_android, color: Colors.green, size: 28),
+                    title: const Text('Open App on Another Phone', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+                    subtitle: const Text('Scan QR code or send WhatsApp link for real smartphones'),
+                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                    onTap: () => ShareToPhoneDialog.show(context),
+                  ),
+                  const Divider(height: 1),
                   ListTile(
                     leading: const Icon(Icons.privacy_tip, color: Colors.blue, size: 28),
                     title: const Text('Privacy & Security Guide', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),

@@ -1,11 +1,11 @@
 {
-    "name": "elder_smartphone_learning_app",
-    "short_name": "elder_smartphone_learning_app",
+    "name": "Elderly Smartphone Learning App",
+    "short_name": "Elder Learn",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#1B5E20",
+    "theme_color": "#2E7D32",
+    "description": "Simple, respectful smartphone learning, community guide videos, and voice group messaging for elders.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

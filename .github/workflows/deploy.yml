@@ -1,0 +1,82 @@
+name: Deploy Web to GitHub Pages and Build Android APK
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy-web:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Install Dependencies
+        run: flutter pub get
+        working-directory: elder_smartphone_learning_app
+
+      - name: Run Flutter Analyze
+        run: flutter analyze
+        working-directory: elder_smartphone_learning_app
+
+      - name: Run Test Suite
+        run: flutter test
+        working-directory: elder_smartphone_learning_app
+
+      - name: Build Web Application
+        run: flutter build web --release --base-href /design-thinking-/
+        working-directory: elder_smartphone_learning_app
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: elder_smartphone_learning_app/build/web
+          branch: gh-pages
+
+  build-android-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Install Dependencies
+        run: flutter pub get
+        working-directory: elder_smartphone_learning_app
+
+      - name: Build Android Release APK
+        run: flutter build apk --release
+        working-directory: elder_smartphone_learning_app
+
+      - name: Upload Android APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: elder-learning-app-release-apk
+          path: elder_smartphone_learning_app/build/app/outputs/flutter-apk/app-release.apk

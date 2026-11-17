@@ -7,6 +7,7 @@ import '../../services/saved_lessons_service.dart';
 import '../../services/user_service.dart';
 import '../category_screen.dart';
 import '../lesson_player_screen.dart';
+import '../share/share_to_phone_dialog.dart';
 import 'glossary_screen.dart';
 
 class LearnHomeView extends StatelessWidget {
@@ -30,6 +31,11 @@ class LearnHomeView extends StatelessWidget {
       appBar: AppBar(
         title: Text(loc.tr('learn_title'), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
         actions: [
+          IconButton(
+            tooltip: 'Open / Share to Phone',
+            icon: const Icon(Icons.qr_code_2, size: 28),
+            onPressed: () => ShareToPhoneDialog.show(context),
+          ),
           IconButton(
             tooltip: loc.tr('glossary_title'),
             icon: const Icon(Icons.menu_book, size: 28),
@@ -87,6 +93,43 @@ class LearnHomeView extends StatelessWidget {
                           ),
                         ),
                       ],
+                    ),
+                  ),
+
+                  // Quick Share to Phone Card
+                  InkWell(
+                    onTap: () => ShareToPhoneDialog.show(context),
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 12),
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.green.shade50,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.green.shade600, width: 1.5),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.phone_android, color: Colors.green.shade800, size: 28),
+                          const SizedBox(width: 10),
+                          const Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Send App to Another Phone',
+                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
+                                ),
+                                Text(
+                                  'Scan QR code or share WhatsApp link to use on any smartphone',
+                                  style: TextStyle(fontSize: 12, color: Colors.black54),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Icon(Icons.qr_code, color: Colors.green.shade800, size: 26),
+                        ],
+                      ),
                     ),
                   ),
 
