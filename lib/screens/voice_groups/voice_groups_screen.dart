@@ -242,10 +242,11 @@ class VoiceGroupsScreen extends StatelessWidget {
                                 const SizedBox(height: 4),
                                 Text(grp.topic, style: const TextStyle(fontSize: 14, color: Colors.black87)),
                                 const SizedBox(height: 4),
-                                Row(
+                                Wrap(
+                                  spacing: 8,
+                                  runSpacing: 4,
                                   children: [
                                     Text('${grp.members.length} members', style: const TextStyle(fontSize: 13, color: Colors.black54)),
-                                    const SizedBox(width: 10),
                                     Text('Code: ${grp.inviteCode}', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.blue.shade800)),
                                   ],
                                 ),

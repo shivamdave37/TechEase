@@ -8,6 +8,8 @@ class UserProfile {
   bool highContrastEnabled;
   int primaryColorValue; // e.g. Colors.blue.value
   bool isAdmin;
+  bool isLoggedIn;
+  String rawPhoneNumber;
   List<String> blockedUserIds;
   List<String> bookmarkedLessonIds;
   List<String> completedLessonIds;
@@ -23,6 +25,8 @@ class UserProfile {
     this.highContrastEnabled = false,
     this.primaryColorValue = 0xFF1976D2, // Colors.blue.shade700
     this.isAdmin = true, // Defaults to true so the user can test the admin moderation dashboard freely!
+    this.isLoggedIn = true,
+    this.rawPhoneNumber = '+91 98765 43210',
     List<String>? blockedUserIds,
     List<String>? bookmarkedLessonIds,
     List<String>? completedLessonIds,

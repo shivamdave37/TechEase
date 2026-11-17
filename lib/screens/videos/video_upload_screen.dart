@@ -363,23 +363,29 @@ class _VideoUploadScreenState extends State<VideoUploadScreen> {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  CheckboxListTile(
-                    contentPadding: EdgeInsets.zero,
-                    value: _isAntiFakeConfirmed,
-                    title: const Text(
-                      'I certify this is an authentic, genuine educational guide (no fake advice or scam claims).',
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  Material(
+                    color: Colors.transparent,
+                    child: CheckboxListTile(
+                      contentPadding: EdgeInsets.zero,
+                      value: _isAntiFakeConfirmed,
+                      title: const Text(
+                        'I certify this is an authentic, genuine educational guide (no fake advice or scam claims).',
+                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                      ),
+                      onChanged: (val) => setState(() => _isAntiFakeConfirmed = val ?? false),
                     ),
-                    onChanged: (val) => setState(() => _isAntiFakeConfirmed = val ?? false),
                   ),
-                  CheckboxListTile(
-                    contentPadding: EdgeInsets.zero,
-                    value: _noSensitiveDataConfirmed,
-                    title: const Text(
-                      'I confirm this video is safe and exposes no bank pins, passwords, or personal phone numbers.',
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  Material(
+                    color: Colors.transparent,
+                    child: CheckboxListTile(
+                      contentPadding: EdgeInsets.zero,
+                      value: _noSensitiveDataConfirmed,
+                      title: const Text(
+                        'I confirm this video is safe and exposes no bank pins, passwords, or personal phone numbers.',
+                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                      ),
+                      onChanged: (val) => setState(() => _noSensitiveDataConfirmed = val ?? false),
                     ),
-                    onChanged: (val) => setState(() => _noSensitiveDataConfirmed = val ?? false),
                   ),
                 ],
               ),

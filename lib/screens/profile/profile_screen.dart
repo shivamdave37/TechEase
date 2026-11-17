@@ -7,6 +7,7 @@ import '../../services/learning_service.dart';
 import '../../services/localization_service.dart';
 import '../../services/moderation_service.dart';
 import '../../services/user_service.dart';
+import '../auth/phone_login_screen.dart';
 import 'moderation_screen.dart';
 import 'privacy_settings_screen.dart';
 
@@ -129,6 +130,19 @@ class ProfileScreen extends StatelessWidget {
                             'Protected Phone: ${user.profile.maskedPhone}',
                             style: const TextStyle(fontSize: 14, color: Colors.black54),
                           ),
+                          const SizedBox(height: 6),
+                          OutlinedButton.icon(
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              minimumSize: const Size(0, 36),
+                            ),
+                            icon: const Icon(Icons.phone_android, size: 16),
+                            label: const Text('Sign In / Change Phone (OTP)', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                            onPressed: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => const PhoneLoginScreen(isModal: true)),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -156,9 +170,9 @@ class ProfileScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        _buildBadge(Icons.check_circle, '$completedCount / $totalCount', 'Completed'),
-                        _buildBadge(Icons.sports_esports, 'Practice', 'Sandbox Ready'),
-                        _buildBadge(Icons.thumb_up, 'Community', 'Active Learner'),
+                        Expanded(child: _buildBadge(Icons.check_circle, '$completedCount / $totalCount', 'Completed')),
+                        Expanded(child: _buildBadge(Icons.sports_esports, 'Practice', 'Sandbox Ready')),
+                        Expanded(child: _buildBadge(Icons.thumb_up, 'Community', 'Active Learner')),
                       ],
                     ),
                   ],
@@ -319,11 +333,12 @@ class ProfileScreen extends StatelessWidget {
 
   Widget _buildBadge(IconData icon, String value, String label) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, color: Colors.blue.shade800, size: 30),
+        Icon(icon, color: Colors.blue.shade800, size: 28),
         const SizedBox(height: 4),
-        Text(value, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-        Text(label, style: const TextStyle(fontSize: 13, color: Colors.black54)),
+        Text(value, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold), textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
+        Text(label, style: const TextStyle(fontSize: 12, color: Colors.black54), textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
       ],
     );
   }

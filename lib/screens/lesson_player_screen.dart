@@ -5,6 +5,7 @@ import '../design_system.dart';
 import '../models/lesson.dart';
 import '../services/learning_service.dart';
 import '../services/saved_lessons_service.dart';
+import '../widgets/zoomable_image_viewer.dart';
 import 'practice_screen.dart';
 
 class LessonPlayerScreen extends StatefulWidget {
@@ -156,22 +157,9 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
                 padding: const EdgeInsets.all(AppDesign.spaceSmall),
                 child: Column(
                   children: [
-                    SizedBox(
+                    ZoomableImageViewer(
+                      imagePath: step.image,
                       height: imageHeight,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.asset(
-                          step.image,
-                          fit: BoxFit.contain,
-                          errorBuilder: (_, __, ___) => const Center(
-                            child: Icon(
-                              Icons.broken_image,
-                              size: 80,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ),
-                      ),
                     ),
                     const SizedBox(height: AppDesign.spaceSmall),
                     Container(

@@ -307,12 +307,15 @@ class VideosScreen extends StatelessWidget {
                                         children: [
                                           Icon(Icons.shield, size: 16, color: Colors.green.shade800),
                                           const SizedBox(width: 6),
-                                          Text(
-                                            '🛡️ Verified Safe Guide • ${video.guideType}',
-                                            style: TextStyle(
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.green.shade900,
+                                          Flexible(
+                                            child: Text(
+                                              '🛡️ Verified Safe Guide • ${video.guideType}',
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.green.shade900,
+                                              ),
                                             ),
                                           ),
                                         ],
@@ -335,11 +338,15 @@ class VideosScreen extends StatelessWidget {
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(
-                                        'By ${video.uploaderName}',
-                                        style: const TextStyle(fontSize: 13, color: Colors.black54),
+                                      Expanded(
+                                        child: Text(
+                                          'By ${video.uploaderName}',
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(fontSize: 13, color: Colors.black54),
+                                        ),
                                       ),
                                       Row(
+                                        mainAxisSize: MainAxisSize.min,
                                         children: [
                                           TextButton.icon(
                                             icon: Icon(

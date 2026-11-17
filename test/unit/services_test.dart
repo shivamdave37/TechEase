@@ -75,6 +75,26 @@ void main() {
       user.unblockUser('spammer_123');
       expect(user.isUserBlocked('spammer_123'), isFalse);
     });
+
+    test('requests OTP and verifies phone number login', () {
+      final user = UserService();
+      final otp = user.requestOtp('+91 98765 43210');
+      expect(otp, '1234');
+      expect(user.pendingPhone, '+91 98765 43210');
+
+      // Incorrect OTP fails
+      final wrong = user.verifyOtp('9999');
+      expect(wrong, isFalse);
+
+      // Correct OTP succeeds
+      final success = user.verifyOtp('1234');
+      expect(success, isTrue);
+      expect(user.profile.isLoggedIn, isTrue);
+      expect(user.profile.maskedPhone, '***-***-3210');
+
+      user.logout();
+      expect(user.profile.isLoggedIn, isFalse);
+    });
   });
 
   group('SavedLessonsService', () {

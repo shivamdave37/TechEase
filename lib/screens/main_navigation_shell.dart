@@ -35,8 +35,10 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
   @override
   Widget build(BuildContext context) {
     final loc = Provider.of<LocalizationService>(context);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isDesktopOrTablet = screenWidth > 600;
 
-    return Scaffold(
+    final content = Scaffold(
       body: IndexedStack(
         index: _currentIndex,
         children: _tabs,
@@ -94,5 +96,29 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
         ),
       ),
     );
+
+    if (isDesktopOrTablet) {
+      return Scaffold(
+        backgroundColor: Colors.blueGrey.shade100,
+        body: Center(
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 480),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.15),
+                  blurRadius: 25,
+                  spreadRadius: 2,
+                ),
+              ],
+            ),
+            child: content,
+          ),
+        ),
+      );
+    }
+
+    return content;
   }
 }
