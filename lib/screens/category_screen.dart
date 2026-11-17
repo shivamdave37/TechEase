@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
+
 import '../design_system.dart';
 import '../models/category.dart';
 import 'task_screen.dart';
@@ -20,9 +21,16 @@ class CategoryScreen extends StatelessWidget {
             const SizedBox(height: AppDesign.spaceMedium),
             Expanded(
               child: ListView.builder(
-                  itemCount: category.tasks.isEmpty ? 1 : category.tasks.length,
+                itemCount: category.tasks.isEmpty ? 1 : category.tasks.length,
                 itemBuilder: (context, i) {
-                  if (category.tasks.isEmpty) return const Center(child: Text('No tasks are available in this category yet.', style: AppDesign.body, textAlign: TextAlign.center));
+                  if (category.tasks.isEmpty)
+                    return const Center(
+                      child: Text(
+                        'No tasks are available in this category yet.',
+                        style: AppDesign.body,
+                        textAlign: TextAlign.center,
+                      ),
+                    );
                   final task = category.tasks[i];
                   return Card(
                     child: ListTile(
@@ -31,7 +39,9 @@ class CategoryScreen extends StatelessWidget {
                       trailing: const Icon(Icons.arrow_forward),
                       onTap: () => Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => TaskScreen(task: task)),
+                        MaterialPageRoute(
+                          builder: (_) => TaskScreen(task: task),
+                        ),
                       ),
                     ),
                   );

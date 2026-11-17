@@ -25,8 +25,16 @@ void main() {
         'title': 'Open WhatsApp',
         'description': 'Learn to open the app',
         'steps': [
-          {'order': 1, 'text': 'Find the icon', 'image': 'assets/images/step1.png'},
-          {'order': 2, 'text': 'Tap the icon', 'image': 'assets/images/step2.png'},
+          {
+            'order': 1,
+            'text': 'Find the icon',
+            'image': 'assets/images/step1.png',
+          },
+          {
+            'order': 2,
+            'text': 'Tap the icon',
+            'image': 'assets/images/step2.png',
+          },
         ],
       });
       expect(lesson.id, 'l1');
@@ -58,9 +66,13 @@ void main() {
             'title': 'Open WhatsApp',
             'description': 'Open the app',
             'steps': [
-              {'order': 1, 'text': 'Find the icon', 'image': 'assets/images/step1.png'},
+              {
+                'order': 1,
+                'text': 'Find the icon',
+                'image': 'assets/images/step1.png',
+              },
             ],
-          }
+          },
         ],
       });
       expect(task.id, 't1');
@@ -91,12 +103,22 @@ void main() {
             'title': 'Send a Message',
             'description': 'How to send',
             'lessons': [],
-          }
+          },
         ],
       });
       expect(cat.id, 'c1');
       expect(cat.title, 'WhatsApp');
       expect(cat.tasks.length, 1);
+    });
+
+    test('fromJson with no tasks key defaults to empty', () {
+      final category = Category.fromJson({
+        'id': 'empty',
+        'title': 'Empty category',
+        'description': 'No tasks yet',
+        'imageAsset': 'assets/images/basics.png',
+      });
+      expect(category.tasks, isEmpty);
     });
   });
 
@@ -172,6 +194,7 @@ void main() {
           }
         }
       }
+
       choose(0); // correct
       expect(stepIndex, 1);
       expect(complete, isFalse);
@@ -182,6 +205,7 @@ void main() {
       void choose(int selected) {
         if (selected == stepIndex) stepIndex++;
       }
+
       choose(2); // wrong
       expect(stepIndex, 0);
     });
@@ -198,6 +222,7 @@ void main() {
           }
         }
       }
+
       choose(2); // correct last step
       expect(complete, isTrue);
     });

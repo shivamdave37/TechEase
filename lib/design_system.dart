@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Central design system for senior‑friendly UI.
 class AppDesign {
@@ -24,10 +24,7 @@ class AppDesign {
     color: Colors.black,
   );
 
-  static const TextStyle body = TextStyle(
-    fontSize: 20,
-    color: Colors.black87,
-  );
+  static const TextStyle body = TextStyle(fontSize: 20, color: Colors.black87);
 
   static const TextStyle button = TextStyle(
     fontSize: 20,

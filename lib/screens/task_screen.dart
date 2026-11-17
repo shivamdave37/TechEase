@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
+
 import '../design_system.dart';
 import '../models/task.dart';
 import 'lesson_player_screen.dart';
@@ -20,18 +21,32 @@ class TaskScreen extends StatelessWidget {
             const SizedBox(height: AppDesign.spaceMedium),
             Expanded(
               child: ListView.builder(
-                  itemCount: task.lessons.isEmpty ? 1 : task.lessons.length,
+                itemCount: task.lessons.isEmpty ? 1 : task.lessons.length,
                 itemBuilder: (context, i) {
-                  if (task.lessons.isEmpty) return const Center(child: Text('No lessons are available for this task yet.', style: AppDesign.body, textAlign: TextAlign.center));
+                  if (task.lessons.isEmpty)
+                    return const Center(
+                      child: Text(
+                        'No lessons are available for this task yet.',
+                        style: AppDesign.body,
+                        textAlign: TextAlign.center,
+                      ),
+                    );
                   final lesson = task.lessons[i];
                   return Card(
                     child: ListTile(
                       title: Text(lesson.title, style: AppDesign.title),
-                      subtitle: Text(lesson.description, style: AppDesign.body, maxLines: 2, overflow: TextOverflow.ellipsis),
+                      subtitle: Text(
+                        lesson.description,
+                        style: AppDesign.body,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                       trailing: const Icon(Icons.play_arrow),
                       onTap: () => Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => LessonPlayerScreen(lesson: lesson)),
+                        MaterialPageRoute(
+                          builder: (_) => LessonPlayerScreen(lesson: lesson),
+                        ),
                       ),
                     ),
                   );

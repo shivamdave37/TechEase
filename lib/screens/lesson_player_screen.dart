@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
+
 import '../design_system.dart';
 import '../models/lesson.dart';
 import 'practice_screen.dart';
@@ -17,11 +18,17 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
   @override
   Widget build(BuildContext context) {
     final steps = widget.lesson.steps;
+    final imageHeight = (MediaQuery.of(context).size.height * 0.3)
+        .clamp(160.0, 280.0)
+        .toDouble();
     if (steps.isEmpty) {
       return Scaffold(
         appBar: AppBar(title: Text(widget.lesson.title)),
         body: const Center(
-          child: Text('No steps available for this lesson.', style: AppDesign.body),
+          child: Text(
+            'No steps available for this lesson.',
+            style: AppDesign.body,
+          ),
         ),
       );
     }
@@ -31,10 +38,13 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.lesson.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+        title: Text(
+          widget.lesson.title,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        ),
       ),
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(AppDesign.spaceMedium),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -44,7 +54,10 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.blue.shade50,
                       borderRadius: BorderRadius.circular(20),
@@ -61,7 +74,11 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
                   ),
                   Text(
                     '${(progress * 100).toInt()}% Done',
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black54),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black54,
+                    ),
                   ),
                 ],
               ),
@@ -78,115 +95,135 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
               const SizedBox(height: AppDesign.spaceMedium),
 
               // Image & Instruction text area
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey.shade300),
-                  ),
-                  padding: const EdgeInsets.all(AppDesign.spaceSmall),
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.asset(
-                            step.image,
-                            fit: BoxFit.contain,
-                            errorBuilder: (_, __, ___) => const Center(
-                              child: Icon(Icons.broken_image, size: 80, color: Colors.grey),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey.shade300),
+                ),
+                padding: const EdgeInsets.all(AppDesign.spaceSmall),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: imageHeight,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.asset(
+                          step.image,
+                          fit: BoxFit.contain,
+                          errorBuilder: (_, __, ___) => const Center(
+                            child: Icon(
+                              Icons.broken_image,
+                              size: 80,
+                              color: Colors.grey,
                             ),
                           ),
                         ),
                       ),
-                      const SizedBox(height: AppDesign.spaceSmall),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade50,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          step.text,
-                          style: AppDesign.body.copyWith(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                            height: 1.3,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
+                    ),
+                    const SizedBox(height: AppDesign.spaceSmall),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
                       ),
-                    ],
-                  ),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade50,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        step.text,
+                        style: AppDesign.body.copyWith(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          height: 1.3,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: AppDesign.spaceMedium),
 
               // Navigation Controls: Back, Repeat, Next
-              Row(
+              Wrap(
+                alignment: WrapAlignment.center,
+                spacing: 8,
+                runSpacing: 8,
                 children: [
-                  Expanded(
-                    child: _NavButton(
-                      label: 'Back',
-                      icon: Icons.arrow_back,
-                      enabled: _currentIndex > 0,
-                      onPressed: _currentIndex > 0 ? () => setState(() => _currentIndex--) : null,
-                    ),
+                  _NavButton(
+                    label: 'Back',
+                    icon: Icons.arrow_back,
+                    enabled: _currentIndex > 0,
+                    onPressed: _currentIndex > 0
+                        ? () => setState(() => _currentIndex--)
+                        : null,
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: _NavButton(
-                      label: 'Repeat',
-                      icon: Icons.replay,
-                      onPressed: _repeatInstruction,
-                    ),
+                  _NavButton(
+                    label: 'Repeat',
+                    icon: Icons.replay,
+                    onPressed: _repeatInstruction,
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: _NavButton(
-                      label: 'Next',
-                      icon: Icons.arrow_forward,
-                      enabled: _currentIndex < steps.length - 1,
-                      onPressed: _currentIndex < steps.length - 1 ? () => setState(() => _currentIndex++) : null,
-                    ),
+                  _NavButton(
+                    label: 'Next',
+                    icon: Icons.arrow_forward,
+                    enabled: _currentIndex < steps.length - 1,
+                    onPressed: _currentIndex < steps.length - 1
+                        ? () => setState(() => _currentIndex++)
+                        : null,
                   ),
                 ],
               ),
               const SizedBox(height: 10),
 
               // Still Confused? & Practice Mode Buttons
-              Row(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.amber.shade700,
-                        foregroundColor: Colors.white,
-                        minimumSize: const Size(0, 52),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.brown.shade800,
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size(0, 52),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                      onPressed: _showConfusedDialog,
-                      icon: const Icon(Icons.help_outline, size: 24),
-                      label: const Text('Still Confused?', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    ),
+                    onPressed: _showConfusedDialog,
+                    icon: const Icon(Icons.help_outline, size: 24),
+                    label: const Text(
+                      'Still Confused?',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green.shade700,
-                        foregroundColor: Colors.white,
-                        minimumSize: const Size(0, 52),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  const SizedBox(height: 8),
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green.shade700,
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size(0, 52),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                      onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => PracticeScreen(lesson: widget.lesson)),
+                    ),
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => PracticeScreen(lesson: widget.lesson),
                       ),
-                      icon: const Icon(Icons.sports_esports, size: 24),
-                      label: const Text('Practice Mode', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    ),
+                    icon: const Icon(Icons.sports_esports, size: 24),
+                    label: const Text(
+                      'Practice Mode',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
@@ -228,7 +265,11 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
               ),
               child: Text(
                 '👉 $instruction',
-                style: const TextStyle(fontSize: 19, fontWeight: FontWeight.bold, color: Colors.black87),
+                style: const TextStyle(
+                  fontSize: 19,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
               ),
             ),
             const SizedBox(height: 12),
@@ -292,7 +333,10 @@ class _NavButton extends StatelessWidget {
     return ElevatedButton.icon(
       onPressed: enabled ? onPressed : null,
       icon: Icon(icon, size: 20),
-      label: Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+      label: Text(
+        label,
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      ),
       style: ElevatedButton.styleFrom(
         minimumSize: const Size(0, 52),
         padding: const EdgeInsets.symmetric(horizontal: 6),
