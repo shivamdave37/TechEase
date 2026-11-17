@@ -29,24 +29,25 @@ jobs:
 
       - name: Install Dependencies
         run: flutter pub get
-        working-directory: elder_smartphone_learning_app
 
       - name: Run Flutter Analyze
         run: flutter analyze
-        working-directory: elder_smartphone_learning_app
 
       - name: Run Test Suite
         run: flutter test
-        working-directory: elder_smartphone_learning_app
 
       - name: Build Web Application
         run: flutter build web --release --base-href /design-thinking-/
-        working-directory: elder_smartphone_learning_app
+
+      - name: Copy Data Assets to Web Root
+        run: |
+          mkdir -p build/web/assets/data
+          cp -r assets/data/* build/web/assets/data/ || true
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: elder_smartphone_learning_app/build/web
+          folder: build/web
           branch: gh-pages
 
   build-android-apk:
@@ -69,14 +70,12 @@ jobs:
 
       - name: Install Dependencies
         run: flutter pub get
-        working-directory: elder_smartphone_learning_app
 
       - name: Build Android Release APK
         run: flutter build apk --release
-        working-directory: elder_smartphone_learning_app
 
       - name: Upload Android APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: elder-learning-app-release-apk
-          path: elder_smartphone_learning_app/build/app/outputs/flutter-apk/app-release.apk
+          path: build/app/outputs/flutter-apk/app-release.apk
