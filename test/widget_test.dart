@@ -6,9 +6,6 @@ import 'package:elder_smartphone_learning_app/models/lesson.dart';
 import 'package:elder_smartphone_learning_app/models/lesson_step.dart';
 import 'package:elder_smartphone_learning_app/models/task.dart';
 import 'package:elder_smartphone_learning_app/screens/category_screen.dart';
-import 'package:elder_smartphone_learning_app/screens/task_screen.dart';
-import 'package:elder_smartphone_learning_app/screens/lesson_player_screen.dart';
-import 'package:elder_smartphone_learning_app/screens/practice_screen.dart';
 
 void main() {
   testWidgets('ElderApp smoke test - renders welcome screen', (WidgetTester tester) async {
