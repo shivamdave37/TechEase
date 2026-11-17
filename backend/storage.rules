@@ -1,0 +1,36 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    function isAdmin() {
+      return isAuthenticated() && request.auth.token.admin == true;
+    }
+
+    // Community Video Uploads:
+    // Max 100MB, mp4 or webm, authenticated uploader
+    match /community_videos/{videoId} {
+      allow read: if true;
+      allow write: if isAuthenticated() 
+                   && request.resource.size < 100 * 1024 * 1024
+                   && request.resource.contentType.matches('video/.*');
+    }
+
+    // Voice Message Recordings:
+    // Max 10MB, audio format only, strictly restricted to group members
+    match /voice_recordings/{groupId}/{messageId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() 
+                   && request.resource.size < 10 * 1024 * 1024
+                   && request.resource.contentType.matches('audio/.*');
+    }
+
+    // Public Assets (Icons, lesson graphics)
+    match /public_assets/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}

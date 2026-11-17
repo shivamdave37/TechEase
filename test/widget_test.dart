@@ -6,6 +6,10 @@ void main() {
   testWidgets(
     'Complete End-to-End Learning Journey: Category -> Task -> Lesson -> Practice',
     (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(800, 1200);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
       // Start at the app's real home screen and load bundled category data.
       await tester.pumpWidget(const ElderApp());
       await pumpUntilCategoriesLoad(tester);

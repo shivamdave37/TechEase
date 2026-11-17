@@ -1,7 +1,10 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:provider/provider.dart';
 
 import '../design_system.dart';
 import '../models/lesson.dart';
+import '../services/learning_service.dart';
+import '../services/saved_lessons_service.dart';
 import 'practice_screen.dart';
 
 class LessonPlayerScreen extends StatefulWidget {
@@ -16,8 +19,35 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
   int _currentIndex = 0;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final saved = Provider.of<SavedLessonsService>(context, listen: false);
+      final savedStep = saved.getSavedStep(widget.lesson.id);
+      if (savedStep > 0 && savedStep < widget.lesson.steps.length) {
+        setState(() => _currentIndex = savedStep);
+      }
+    });
+  }
+
+  void _onStepChange(int newIndex) {
+    setState(() => _currentIndex = newIndex);
+    final saved = Provider.of<SavedLessonsService>(context, listen: false);
+    final learning = Provider.of<LearningService>(context, listen: false);
+
+    saved.saveStepProgress(widget.lesson.id, newIndex);
+    if (newIndex == widget.lesson.steps.length - 1) {
+      learning.markLessonCompleted(widget.lesson.id);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final steps = widget.lesson.steps;
+    final saved = Provider.of<SavedLessonsService>(context);
+    final isBookmarked = saved.isBookmarked(widget.lesson.id);
+
     final imageHeight = (MediaQuery.of(context).size.height * 0.3)
         .clamp(160.0, 280.0)
         .toDouble();
@@ -35,6 +65,7 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
 
     final step = steps[_currentIndex];
     final progress = (_currentIndex + 1) / steps.length;
+    final isLastStep = _currentIndex == steps.length - 1;
 
     return Scaffold(
       appBar: AppBar(
@@ -42,6 +73,27 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
           widget.lesson.title,
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
+        actions: [
+          IconButton(
+            tooltip: isBookmarked ? 'Remove Bookmark' : 'Save Lesson',
+            icon: Icon(
+              isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+              color: isBookmarked ? Colors.amber.shade300 : Colors.white,
+              size: 28,
+            ),
+            onPressed: () {
+              saved.toggleBookmark(widget.lesson.id);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    isBookmarked ? 'Removed from saved lessons' : 'Saved to your lessons list!',
+                  ),
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -158,7 +210,7 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
                     icon: Icons.arrow_back,
                     enabled: _currentIndex > 0,
                     onPressed: _currentIndex > 0
-                        ? () => setState(() => _currentIndex--)
+                        ? () => _onStepChange(_currentIndex - 1)
                         : null,
                   ),
                   _NavButton(
@@ -167,62 +219,65 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
                     onPressed: _repeatInstruction,
                   ),
                   _NavButton(
-                    label: 'Next',
-                    icon: Icons.arrow_forward,
-                    enabled: _currentIndex < steps.length - 1,
-                    onPressed: _currentIndex < steps.length - 1
-                        ? () => setState(() => _currentIndex++)
-                        : null,
+                    label: isLastStep ? 'Finished' : 'Next',
+                    icon: isLastStep ? Icons.check : Icons.arrow_forward,
+                    enabled: true,
+                    onPressed: isLastStep
+                        ? _showCompletionDialog
+                        : () => _onStepChange(_currentIndex + 1),
                   ),
                 ],
               ),
               const SizedBox(height: 10),
 
               // Still Confused? & Practice Mode Buttons
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+              Row(
                 children: [
-                  ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.brown.shade800,
-                      foregroundColor: Colors.white,
-                      minimumSize: const Size(0, 52),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.amber.shade700,
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size(0, 52),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
-                    ),
-                    onPressed: _showConfusedDialog,
-                    icon: const Icon(Icons.help_outline, size: 24),
-                    label: const Text(
-                      'Still Confused?',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                      onPressed: _showConfusedDialog,
+                      icon: const Icon(Icons.help_outline, size: 24),
+                      label: const Text(
+                        'Still Confused?',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green.shade700,
-                      foregroundColor: Colors.white,
-                      minimumSize: const Size(0, 52),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green.shade700,
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size(0, 52),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
-                    ),
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => PracticeScreen(lesson: widget.lesson),
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => PracticeScreen(lesson: widget.lesson),
+                        ),
                       ),
-                    ),
-                    icon: const Icon(Icons.sports_esports, size: 24),
-                    label: const Text(
-                      'Practice Mode',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                      icon: const Icon(Icons.sports_esports, size: 24),
+                      label: const Text(
+                        'Practice Mode',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
@@ -231,6 +286,57 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  void _showCompletionDialog() {
+    final learning = Provider.of<LearningService>(context, listen: false);
+    learning.markLessonCompleted(widget.lesson.id);
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: const [
+            Icon(Icons.celebration, color: Colors.green, size: 36),
+            SizedBox(width: 10),
+            Text('Lesson Completed!'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Wonderful job! You have completed all steps of "${widget.lesson.title}".',
+              style: const TextStyle(fontSize: 17),
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              'Would you like to try Practice Mode now to practice tapping the simulated screen?',
+              style: TextStyle(fontSize: 15, color: Colors.black87),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Back to Steps', style: TextStyle(fontSize: 16)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade700, foregroundColor: Colors.white),
+            onPressed: () {
+              Navigator.pop(ctx);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => PracticeScreen(lesson: widget.lesson)),
+              );
+            },
+            child: const Text('Practice Now', style: TextStyle(fontSize: 16)),
+          ),
+        ],
       ),
     );
   }
@@ -338,8 +444,8 @@ class _NavButton extends StatelessWidget {
         style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
       style: ElevatedButton.styleFrom(
-        minimumSize: const Size(0, 52),
-        padding: const EdgeInsets.symmetric(horizontal: 6),
+        minimumSize: const Size(100, 52),
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );

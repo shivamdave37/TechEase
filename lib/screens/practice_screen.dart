@@ -1,10 +1,12 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:provider/provider.dart';
 
 import '../design_system.dart';
 import '../models/lesson.dart';
+import '../services/analytics_service.dart';
+import '../services/learning_service.dart';
 
-/// A text-only practice exercise. It teaches the sequence but never opens or
-/// controls another app.
+/// A text-and-interactive practice simulation. It teaches the sequence safely without controlling another app.
 class PracticeScreen extends StatefulWidget {
   final Lesson lesson;
   const PracticeScreen({Key? key, required this.lesson}) : super(key: key);
@@ -80,12 +82,18 @@ class _PracticeScreenState extends State<PracticeScreen> {
                         ),
                         child: Semantics(
                           liveRegion: true,
-                          child: Text(_feedback!, style: AppDesign.body),
+                          child: Text(
+                            _feedback!,
+                            style: AppDesign.body.copyWith(
+                              color: _feedback!.startsWith('Correct') ? Colors.green.shade800 : Colors.red.shade800,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ),
                     const Text(
-                      'This is a practice activity. It does not open or control WhatsApp or any other app.',
-                      style: TextStyle(fontSize: 16, color: Colors.black87),
+                      'This is a learning simulation. It does not open or control WhatsApp or any other app.',
+                      style: TextStyle(fontSize: 15, color: Colors.black54),
                     ),
                   ],
                 ),
@@ -95,31 +103,51 @@ class _PracticeScreenState extends State<PracticeScreen> {
   }
 
   Widget _completionView() => Center(
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const Icon(
-          Icons.check_circle,
-          size: 72,
-          color: Colors.green,
-          semanticLabel: 'Practice complete',
-        ),
-        const SizedBox(height: AppDesign.spaceMedium),
-        const Text(
-          'Practice complete!',
-          style: AppDesign.headline,
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: AppDesign.spaceMedium),
-        ElevatedButton(
-          onPressed: () => setState(() {
-            _stepIndex = 0;
-            _feedback = null;
-            _complete = false;
-          }),
-          child: const Text('Practise again'),
-        ),
-      ],
+    child: Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(
+            Icons.check_circle,
+            size: 80,
+            color: Colors.green,
+            semanticLabel: 'Practice complete',
+          ),
+          const SizedBox(height: AppDesign.spaceMedium),
+          const Text(
+            'Practice complete!',
+            style: AppDesign.headline,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 10),
+          const Text(
+            'You selected every step in the right order! You are ready to use this on your phone with confidence.',
+            style: TextStyle(fontSize: 18, color: Colors.black87),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: AppDesign.spaceLarge),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              OutlinedButton(
+                onPressed: () => setState(() {
+                  _stepIndex = 0;
+                  _feedback = null;
+                  _complete = false;
+                }),
+                child: const Text('Practise again'),
+              ),
+              const SizedBox(width: 16),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade700, foregroundColor: Colors.white),
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Finish Practice'),
+              ),
+            ],
+          ),
+        ],
+      ),
     ),
   );
 
@@ -134,6 +162,13 @@ class _PracticeScreenState extends State<PracticeScreen> {
       _feedback = 'Correct. ${widget.lesson.steps[_stepIndex].text}';
       if (_stepIndex == widget.lesson.steps.length - 1) {
         _complete = true;
+        // Mark completed in learning and analytics
+        try {
+          final learning = Provider.of<LearningService>(context, listen: false);
+          final analytics = Provider.of<AnalyticsService>(context, listen: false);
+          learning.markLessonCompleted(widget.lesson.id);
+          analytics.logEvent('practice_completed', {'lessonId': widget.lesson.id});
+        } catch (_) {}
       } else {
         _stepIndex++;
       }

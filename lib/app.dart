@@ -1,49 +1,45 @@
 import 'package:material_ui/material_ui.dart';
-
-import 'screens/home_screen.dart';
+import 'package:provider/provider.dart';
+import 'screens/main_navigation_shell.dart';
+import 'services/accessibility_service.dart';
+import 'services/analytics_service.dart';
+import 'services/community_video_service.dart';
+import 'services/learning_service.dart';
+import 'services/localization_service.dart';
+import 'services/moderation_service.dart';
+import 'services/saved_lessons_service.dart';
+import 'services/search_service.dart';
+import 'services/user_service.dart';
+import 'services/voice_group_service.dart';
 
 class ElderApp extends StatelessWidget {
   const ElderApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Elderly Learning App',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        scaffoldBackgroundColor: Colors.grey[50],
-        textTheme: const TextTheme(
-          // Material 3 equivalents (Flutter 3.47+)
-          displayLarge: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
-          titleLarge: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: Colors.black,
-          ),
-          bodyMedium: TextStyle(fontSize: 18, color: Colors.black87),
-          labelLarge: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
-            color: Colors.white,
-          ),
-        ),
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            minimumSize: const Size(200, 56),
-            textStyle: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AccessibilityService()),
+        ChangeNotifierProvider(create: (_) => LocalizationService()),
+        ChangeNotifierProvider(create: (_) => UserService()),
+        ChangeNotifierProvider(create: (_) => LearningService()),
+        ChangeNotifierProvider(create: (_) => SavedLessonsService()),
+        ChangeNotifierProvider(create: (_) => SearchService()),
+        ChangeNotifierProvider(create: (_) => CommunityVideoService()),
+        ChangeNotifierProvider(create: (_) => VoiceGroupService()),
+        ChangeNotifierProvider(create: (_) => ModerationService()),
+        ChangeNotifierProvider(create: (_) => AnalyticsService()),
+      ],
+      child: Consumer2<AccessibilityService, LocalizationService>(
+        builder: (context, accessibility, localization, _) {
+          return MaterialApp(
+            title: localization.tr('app_title'),
+            debugShowCheckedModeBanner: false,
+            theme: accessibility.themeData,
+            home: const MainNavigationShell(),
+          );
+        },
       ),
-      home: const HomeScreen(),
     );
   }
 }
