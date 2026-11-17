@@ -1,0 +1,58 @@
+[
+  {
+    "id": "g_qr",
+    "term": "QR Code",
+    "definition": "A square barcode made of black and white shapes that your camera can read to open a website, menu, or payment.",
+    "simpleExample": "Like scanning a paper menu at a restaurant using your phone camera.",
+    "iconName": "qr_code_scanner",
+    "relatedCategory": "QR Codes"
+  },
+  {
+    "id": "g_attachment",
+    "term": "Attachment",
+    "definition": "A photo, video, or paper document that you clip to a message to send to someone else.",
+    "simpleExample": "Like putting a printed photo into a mailing envelope before sealing it.",
+    "iconName": "attach_file",
+    "relatedCategory": "WhatsApp"
+  },
+  {
+    "id": "g_contact",
+    "term": "Contact",
+    "definition": "The name and phone number of a person saved in your phone address book.",
+    "simpleExample": "Your daughter, doctor, or neighbor saved in your phone.",
+    "iconName": "person",
+    "relatedCategory": "Smartphone Basics"
+  },
+  {
+    "id": "g_download",
+    "term": "Download",
+    "definition": "Saving a picture, song, or document from the internet onto your own phone storage.",
+    "simpleExample": "Saving a recipe photo someone sent you so you can see it without internet.",
+    "iconName": "download",
+    "relatedCategory": "Internet & Browsing"
+  },
+  {
+    "id": "g_microphone",
+    "term": "Microphone",
+    "definition": "The tiny audio sensor in your phone that hears your voice when speaking on calls or sending voice messages.",
+    "simpleExample": "Tap the microphone icon to speak instead of typing with your fingers.",
+    "iconName": "mic",
+    "relatedCategory": "Voice Groups"
+  },
+  {
+    "id": "g_settings",
+    "term": "Settings",
+    "definition": "The phone control center where you can make text larger, adjust volume, or turn on Wi-Fi.",
+    "simpleExample": "Looks like a small gear or wheel on your home screen.",
+    "iconName": "settings",
+    "relatedCategory": "Smartphone Basics"
+  },
+  {
+    "id": "g_wifi",
+    "term": "Wi-Fi",
+    "definition": "Wireless internet in your home or cafe that lets your phone connect without using mobile data.",
+    "simpleExample": "Looks like small curved radio waves in the top corner of your screen.",
+    "iconName": "wifi",
+    "relatedCategory": "Smartphone Basics"
+  }
+]
