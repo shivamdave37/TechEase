@@ -16,6 +16,9 @@ class CommunityVideo {
   VideoModerationStatus status;
   String? rejectionReason;
   final DateTime uploadDate;
+  final bool isVerifiedGuide;
+  final String guideType;
+  final bool isAntiFakeCertified;
 
   CommunityVideo({
     required this.id,
@@ -33,6 +36,9 @@ class CommunityVideo {
     this.status = VideoModerationStatus.approved,
     this.rejectionReason,
     required this.uploadDate,
+    this.isVerifiedGuide = true,
+    this.guideType = 'Step-by-Step Guide',
+    this.isAntiFakeCertified = true,
   });
 
   factory CommunityVideo.fromJson(Map<String, dynamic> json) {
@@ -57,6 +63,9 @@ class CommunityVideo {
       uploadDate: json['uploadDate'] != null
           ? DateTime.parse(json['uploadDate'] as String)
           : DateTime.now(),
+      isVerifiedGuide: json['isVerifiedGuide'] as bool? ?? true,
+      guideType: json['guideType'] as String? ?? 'Step-by-Step Guide',
+      isAntiFakeCertified: json['isAntiFakeCertified'] as bool? ?? true,
     );
   }
 
@@ -76,5 +85,8 @@ class CommunityVideo {
     'status': status.name,
     'rejectionReason': rejectionReason,
     'uploadDate': uploadDate.toIso8601String(),
+    'isVerifiedGuide': isVerifiedGuide,
+    'guideType': guideType,
+    'isAntiFakeCertified': isAntiFakeCertified,
   };
 }

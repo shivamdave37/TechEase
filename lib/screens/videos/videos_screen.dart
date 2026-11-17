@@ -19,12 +19,12 @@ class VideosScreen extends StatelessWidget {
   }
 
   void _showReportDialog(BuildContext context, CommunityVideo video) {
-    String selectedReason = 'Inappropriate content';
+    String selectedReason = '🚨 Fake or misleading guide (Bad advice for seniors)';
     final reasons = [
-      'Inappropriate content or bad language',
+      '🚨 Fake or misleading guide (Bad advice for seniors)',
+      '🚨 Suspected scam, lottery, or phishing link',
       'Shows private or financial information',
-      'Misleading or false phone advice',
-      'Suspected scam or spam',
+      'Inappropriate content or bad language',
     ];
 
     showDialog(
@@ -148,6 +148,60 @@ class VideosScreen extends StatelessWidget {
             ),
             const Divider(height: 1),
 
+            // Senior Anti-Fake Guide Banner
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: AppDesign.spaceMedium, vertical: 8),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.green.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.green.shade600, width: 2),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.verified_user, color: Colors.green.shade800, size: 28),
+                      const SizedBox(width: 8),
+                      const Expanded(
+                        child: Text(
+                          'Senior Safe Guide Hub — Anti-Fake Shield',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'Fake videos with misleading advice or scams are strictly blocked. Anyone can upload a verified, safe guide video below to help other seniors!',
+                    style: TextStyle(fontSize: 14, color: Colors.black87, height: 1.3),
+                  ),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 44,
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green.shade700,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                      icon: const Icon(Icons.add_circle_outline, size: 22),
+                      label: const Text(
+                        'Upload a Helpful Guide Video',
+                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                      ),
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const VideoUploadScreen()),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
             // Video List
             Expanded(
               child: videos.isEmpty
@@ -237,6 +291,33 @@ class VideosScreen extends StatelessWidget {
                                     ),
                                   ),
                                   const SizedBox(height: 12),
+
+                                  // Verified Guide Badge
+                                  if (video.isVerifiedGuide)
+                                    Container(
+                                      margin: const EdgeInsets.only(bottom: 8),
+                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: Colors.green.shade50,
+                                        borderRadius: BorderRadius.circular(6),
+                                        border: Border.all(color: Colors.green.shade600, width: 1.5),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(Icons.shield, size: 16, color: Colors.green.shade800),
+                                          const SizedBox(width: 6),
+                                          Text(
+                                            '🛡️ Verified Safe Guide • ${video.guideType}',
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.green.shade900,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
 
                                   // Video Title and Description
                                   Text(

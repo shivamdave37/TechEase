@@ -85,6 +85,27 @@ class CommunityVideoService extends ChangeNotifier {
         isMarkedHelpful: false,
         status: VideoModerationStatus.approved,
         uploadDate: DateTime.now().subtract(const Duration(days: 10)),
+        isVerifiedGuide: true,
+        guideType: 'Maps Navigation Guide',
+        isAntiFakeCertified: true,
+      ),
+      CommunityVideo(
+        id: 'vid_5',
+        title: 'Anti-Scam Alert: How to Spot Fake Calls & Scam Messages',
+        description: 'Crucial guide for seniors: Never share OTPs or click suspicious links claiming you won a prize. Learn to block fake numbers safely.',
+        category: 'Smartphone Basics',
+        durationSeconds: 110,
+        uploaderId: 'user_safety_team',
+        uploaderName: 'Elderly Cyber Safety Team',
+        videoUrl: 'assets/videos/sample.mp4',
+        thumbnailUrl: 'assets/images/basics.png',
+        helpfulCount: 88,
+        isMarkedHelpful: true,
+        status: VideoModerationStatus.approved,
+        uploadDate: DateTime.now().subtract(const Duration(days: 1)),
+        isVerifiedGuide: true,
+        guideType: 'Anti-Scam Guide',
+        isAntiFakeCertified: true,
       ),
     ]);
   }
@@ -125,6 +146,9 @@ class CommunityVideoService extends ChangeNotifier {
     required String uploaderId,
     required String videoPathOrUrl,
     required int durationSeconds,
+    bool autoApprove = false,
+    String guideType = 'Step-by-Step Guide',
+    bool isAntiFakeCertified = true,
   }) {
     final newVideo = CommunityVideo(
       id: 'vid_${DateTime.now().millisecondsSinceEpoch}',
@@ -136,8 +160,11 @@ class CommunityVideoService extends ChangeNotifier {
       uploaderName: uploaderName,
       videoUrl: videoPathOrUrl,
       thumbnailUrl: 'assets/images/basics.png',
-      status: VideoModerationStatus.pending, // Goes to moderation queue first!
+      status: autoApprove ? VideoModerationStatus.approved : VideoModerationStatus.pending,
       uploadDate: DateTime.now(),
+      isVerifiedGuide: true,
+      guideType: guideType,
+      isAntiFakeCertified: isAntiFakeCertified,
     );
     _videos.insert(0, newVideo);
     notifyListeners();
