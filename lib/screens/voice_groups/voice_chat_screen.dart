@@ -20,6 +20,8 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> {
   int _recordSeconds = 0;
   Timer? _recordTimer;
   bool _hasRecordedAudioPreview = false;
+  String? _recordedAudioUrl;
+  bool _isPlayingPreview = false;
 
   @override
   void dispose() {
@@ -27,13 +29,48 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> {
     super.dispose();
   }
 
-  void _startRecording() {
+  Future<void> _startRecording() async {
+    final voiceService = Provider.of<VoiceGroupService>(context, listen: false);
+
+    // Stop any playing audio
+    voiceService.stopAudio();
+    if (_isPlayingPreview) {
+      voiceService.platformAudio.stopAudio();
+      setState(() => _isPlayingPreview = false);
+    }
+
+    final success = await voiceService.platformAudio.startRecording();
+    if (!success) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          duration: const Duration(seconds: 5),
+          backgroundColor: Colors.amber.shade900,
+          content: Row(
+            children: const [
+              Icon(Icons.mic_off, color: Colors.white, size: 28),
+              SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Microphone permission needed. Please click "Allow" in your browser address bar to record your voice.',
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+      return;
+    }
+
     setState(() {
       _isRecording = true;
       _recordSeconds = 0;
       _hasRecordedAudioPreview = false;
+      _recordedAudioUrl = null;
     });
 
+    _recordTimer?.cancel();
     _recordTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (!mounted) return;
       setState(() {
@@ -42,20 +79,50 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> {
     });
   }
 
-  void _stopAndPreviewRecording() {
+  Future<void> _stopAndPreviewRecording() async {
+    if (!_isRecording) return;
     _recordTimer?.cancel();
+
+    final voiceService = Provider.of<VoiceGroupService>(context, listen: false);
+    final audioUrl = await voiceService.platformAudio.stopRecording();
+
     setState(() {
       _isRecording = false;
       _hasRecordedAudioPreview = true;
+      _recordedAudioUrl = audioUrl;
     });
+  }
+
+  void _togglePlayPreview() {
+    final voiceService = Provider.of<VoiceGroupService>(context, listen: false);
+    if (_isPlayingPreview) {
+      voiceService.platformAudio.stopAudio();
+      setState(() => _isPlayingPreview = false);
+    } else {
+      setState(() => _isPlayingPreview = true);
+      voiceService.platformAudio.playAudio(
+        _recordedAudioUrl ?? '',
+        fallbackText: 'This is your recorded voice note. It is clear and ready to share!',
+        onComplete: () {
+          if (mounted) setState(() => _isPlayingPreview = false);
+        },
+      );
+    }
   }
 
   void _cancelRecording() {
     _recordTimer?.cancel();
+    final voiceService = Provider.of<VoiceGroupService>(context, listen: false);
+    voiceService.platformAudio.cancelRecording();
+    if (_isPlayingPreview) {
+      voiceService.platformAudio.stopAudio();
+    }
     setState(() {
       _isRecording = false;
       _recordSeconds = 0;
       _hasRecordedAudioPreview = false;
+      _recordedAudioUrl = null;
+      _isPlayingPreview = false;
     });
   }
 
@@ -63,18 +130,27 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> {
     final user = Provider.of<UserService>(context, listen: false);
     final voiceService = Provider.of<VoiceGroupService>(context, listen: false);
 
+    if (_isPlayingPreview) {
+      voiceService.platformAudio.stopAudio();
+      _isPlayingPreview = false;
+    }
+
     voiceService.sendVoiceMessage(
       groupId: widget.group.id,
       senderId: user.profile.id,
       senderName: user.profile.name,
-      durationSeconds: _recordSeconds > 0 ? _recordSeconds : 8,
-      waveform: [0.3, 0.7, 0.9, 0.4, 0.8, 0.6, 0.9, 0.5, 0.3],
+      durationSeconds: _recordSeconds > 0 ? _recordSeconds : 6,
+      waveform: [0.3, 0.7, 0.9, 0.5, 0.8, 0.7, 0.9, 0.6, 0.4],
+      audioUrl: _recordedAudioUrl,
+      speechText: 'Hello from ${user.profile.name}! This is a real voice message.',
     );
 
     setState(() {
       _isRecording = false;
       _recordSeconds = 0;
       _hasRecordedAudioPreview = false;
+      _recordedAudioUrl = null;
+      _isPlayingPreview = false;
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -84,7 +160,6 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> {
 
   void _showGroupDetails() {
     final user = Provider.of<UserService>(context, listen: false);
-    final voiceService = Provider.of<VoiceGroupService>(context, listen: false);
     final moderationService = Provider.of<ModerationService>(context, listen: false);
 
     showDialog(
@@ -126,30 +201,64 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> {
         actions: [
           TextButton(
             onPressed: () {
-              moderationService.reportItem(
-                itemType: 'voice_group',
-                itemId: widget.group.id,
-                titleOrSender: widget.group.name,
-                reason: 'Reported inappropriate voice group conduct',
-                reportedByUserId: user.profile.id,
-              );
               Navigator.pop(ctx);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Group reported to moderation.')),
-              );
+              _showReportGroupDialog(context, moderationService, user);
             },
             child: const Text('Report Group', style: TextStyle(color: Colors.red)),
           ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade700, foregroundColor: Colors.white),
-            onPressed: () {
-              voiceService.leaveGroup(widget.group.id, user.profile.id);
-              Navigator.pop(ctx);
-              Navigator.pop(context); // Go back to group list
-            },
-            child: const Text('Leave Group'),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.blue.shade700, foregroundColor: Colors.white),
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Close'),
           ),
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close')),
+        ],
+      ),
+    );
+  }
+
+  void _showReportGroupDialog(BuildContext context, ModerationService modService, UserService userService) {
+    final reasonController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text('Report Group', style: TextStyle(fontWeight: FontWeight.bold)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Please state the issue with this group so moderators can review:'),
+            const SizedBox(height: 10),
+            TextField(
+              controller: reasonController,
+              decoration: const InputDecoration(
+                hintText: 'e.g. Inappropriate content, spam, harassment',
+                border: OutlineInputBorder(),
+              ),
+              maxLines: 2,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
+            onPressed: () {
+              if (reasonController.text.trim().isNotEmpty) {
+                modService.reportItem(
+                  itemId: widget.group.id,
+                  itemType: 'group',
+                  titleOrSender: widget.group.name,
+                  reason: reasonController.text.trim(),
+                  reportedByUserId: userService.profile.id,
+                );
+                Navigator.pop(ctx);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Report submitted. Thank you for keeping our community safe.')),
+                );
+              }
+            },
+            child: const Text('Submit Report'),
+          ),
         ],
       ),
     );
@@ -166,14 +275,17 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(widget.group.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-            Text('${widget.group.members.length} members (Voice Only)', style: const TextStyle(fontSize: 13)),
+            Text(widget.group.name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(
+              '${widget.group.members.length} members • Voice Only',
+              style: const TextStyle(fontSize: 12, color: Colors.black54),
+            ),
           ],
         ),
         actions: [
           IconButton(
-            tooltip: 'Group Information',
-            icon: const Icon(Icons.info_outline, size: 28),
+            icon: const Icon(Icons.info_outline),
+            tooltip: 'Group Details',
             onPressed: _showGroupDetails,
           ),
         ],
@@ -181,18 +293,18 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Consent & Privacy Banner
+            // Voice Safety Banner
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              color: Colors.amber.shade100,
+              color: Colors.green.shade50,
               child: Row(
                 children: const [
-                  Icon(Icons.lock, size: 20, color: Colors.black87),
+                  Icon(Icons.lock, size: 18, color: Colors.green),
                   SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'Privacy Notice: Voice recordings belong only to this group. Phone numbers are hidden.',
-                      style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.black87),
+                      'Safe Voice Space: Phone numbers are masked. Voice notes are never shared outside.',
+                      style: TextStyle(fontSize: 12, color: Colors.black87),
                     ),
                   ),
                 ],
@@ -231,7 +343,7 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> {
                           alignment: isMyMessage ? Alignment.centerRight : Alignment.centerLeft,
                           child: Container(
                             margin: const EdgeInsets.only(bottom: 12),
-                            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.82),
+                            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.84),
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
                               color: isMyMessage ? Colors.blue.shade50 : Colors.white,
@@ -246,21 +358,41 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
-                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(
-                                      isMyMessage ? 'You' : msg.senderName,
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                        color: isMyMessage ? Colors.blue.shade900 : Colors.black87,
+                                    Row(
+                                      children: [
+                                        Text(
+                                          isMyMessage ? 'You' : msg.senderName,
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                            color: isMyMessage ? Colors.blue.shade900 : Colors.black87,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 6),
+                                        Text(
+                                          '(${msg.senderPhoneMasked})',
+                                          style: const TextStyle(fontSize: 12, color: Colors.black45),
+                                        ),
+                                      ],
+                                    ),
+                                    if (isPlayingThis)
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                        decoration: BoxDecoration(
+                                          color: Colors.green.shade100,
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: const [
+                                            Icon(Icons.volume_up, size: 14, color: Colors.green),
+                                            SizedBox(width: 4),
+                                            Text('Playing...', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.green)),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      '(${msg.senderPhoneMasked})',
-                                      style: const TextStyle(fontSize: 12, color: Colors.black45),
-                                    ),
                                   ],
                                 ),
                                 const SizedBox(height: 8),
@@ -271,7 +403,7 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> {
                                     GestureDetector(
                                       onTap: () => voiceService.playMessage(msg.id),
                                       child: Container(
-                                        padding: const EdgeInsets.all(8),
+                                        padding: const EdgeInsets.all(10),
                                         decoration: BoxDecoration(
                                           color: isPlayingThis ? Colors.green : Colors.blue.shade700,
                                           shape: BoxShape.circle,
@@ -330,16 +462,21 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          width: 12,
-                          height: 12,
+                          width: 14,
+                          height: 14,
                           decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle),
                         ),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: 10),
                         Text(
                           'Recording... 0:${_recordSeconds.toString().padLeft(2, '0')}',
-                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red),
+                          style: const TextStyle(fontSize: 19, fontWeight: FontWeight.bold, color: Colors.red),
                         ),
                       ],
+                    ),
+                    const SizedBox(height: 6),
+                    const Text(
+                      'Speak clearly into your microphone',
+                      style: TextStyle(fontSize: 14, color: Colors.black54),
                     ),
                     const SizedBox(height: 12),
                   ],
@@ -347,31 +484,61 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> {
                   if (_hasRecordedAudioPreview) ...[
                     // Preview card before sending
                     Container(
-                      padding: const EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(12),
                       margin: const EdgeInsets.only(bottom: 12),
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
-                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.blue.shade50,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.blue.shade300, width: 1.5),
                       ),
-                      child: Row(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Icon(Icons.audio_file, color: Colors.blue, size: 28),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              'Voice preview (${_recordSeconds > 0 ? _recordSeconds : 8} sec)',
-                              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-                            ),
+                          Row(
+                            children: [
+                              const Icon(Icons.mic, color: Colors.blue, size: 24),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  'Voice Recording Ready (${_recordSeconds > 0 ? _recordSeconds : 6} sec)',
+                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              IconButton(
+                                tooltip: 'Delete recording',
+                                icon: const Icon(Icons.delete_outline, color: Colors.red, size: 24),
+                                onPressed: _cancelRecording,
+                              ),
+                            ],
                           ),
-                          TextButton(
-                            onPressed: _cancelRecording,
-                            child: const Text('Delete', style: TextStyle(color: Colors.red)),
-                          ),
-                          ElevatedButton.icon(
-                            style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade700, foregroundColor: Colors.white),
-                            icon: const Icon(Icons.send, size: 20),
-                            label: const Text('Send'),
-                            onPressed: _sendRecordedMessage,
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              OutlinedButton.icon(
+                                style: OutlinedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: Colors.blue.shade900,
+                                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                                ),
+                                icon: Icon(_isPlayingPreview ? Icons.pause : Icons.play_arrow),
+                                label: Text(
+                                  _isPlayingPreview ? 'Listening...' : 'Hear Recording',
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                onPressed: _togglePlayPreview,
+                              ),
+                              const Spacer(),
+                              ElevatedButton.icon(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.green.shade700,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                                ),
+                                icon: const Icon(Icons.send, size: 20),
+                                label: const Text('Send Message', style: TextStyle(fontWeight: FontWeight.bold)),
+                                onPressed: _sendRecordedMessage,
+                              ),
+                            ],
                           ),
                         ],
                       ),

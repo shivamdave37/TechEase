@@ -4,8 +4,11 @@ import 'package:provider/provider.dart';
 import 'package:elder_smartphone_learning_app/widgets/zoomable_image_viewer.dart';
 import 'package:elder_smartphone_learning_app/screens/auth/phone_login_screen.dart';
 import 'package:elder_smartphone_learning_app/screens/videos/video_upload_screen.dart';
+import 'package:elder_smartphone_learning_app/screens/voice_groups/voice_chat_screen.dart';
 import 'package:elder_smartphone_learning_app/services/user_service.dart';
 import 'package:elder_smartphone_learning_app/services/community_video_service.dart';
+import 'package:elder_smartphone_learning_app/services/voice_group_service.dart';
+import 'package:elder_smartphone_learning_app/services/moderation_service.dart';
 
 void main() {
   group('ZoomableImageViewer Tests', () {
@@ -130,6 +133,67 @@ void main() {
         find.textContaining('I certify this is an authentic, genuine educational guide'),
         findsOneWidget,
       );
+    });
+  });
+
+  group('VoiceChatScreen Audio & Recording Tests', () {
+    testWidgets('renders voice chat messages, triggers recording, preview, and play', (WidgetTester tester) async {
+      await tester.binding.setSurfaceSize(const Size(800, 1400));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      final voiceService = VoiceGroupService();
+      final userService = UserService();
+      final modService = ModerationService();
+      final testGroup = voiceService.groups.first;
+
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider<VoiceGroupService>.value(value: voiceService),
+            ChangeNotifierProvider<UserService>.value(value: userService),
+            ChangeNotifierProvider<ModerationService>.value(value: modService),
+          ],
+          child: MaterialApp(
+            home: VoiceChatScreen(group: testGroup),
+          ),
+        ),
+      );
+
+      // Verify group info and initial messages
+      expect(find.text(testGroup.name), findsOneWidget);
+      expect(find.text('Hold to Record Voice Message'), findsOneWidget);
+
+      // Verify seed messages rendered
+      expect(find.text('Mary Higgins'), findsOneWidget);
+
+      // Tap play on Mary's message
+      final playButtons = find.byIcon(Icons.play_arrow);
+      expect(playButtons, findsWidgets);
+      await tester.tap(playButtons.first);
+      await tester.pump();
+
+      // Verify audio state updated to playing
+      expect(voiceService.isPlayingAudio, isTrue);
+
+      // Tap recording button
+      await tester.tap(find.text('Hold to Record Voice Message'));
+      await tester.pump(const Duration(milliseconds: 100));
+
+      // Stop recording by tapping again
+      await tester.tap(find.byType(ElevatedButton).last);
+      await tester.pumpAndSettle();
+
+      // Verify preview card appears with "Hear Recording" and "Send Message"
+      expect(find.text('Hear Recording'), findsOneWidget);
+      expect(find.text('Send Message'), findsOneWidget);
+
+      // Tap "Send Message"
+      await tester.tap(find.text('Send Message'));
+      await tester.pumpAndSettle();
+
+      // Verify message was added to group
+      final updatedMsgs = voiceService.getMessagesForGroup(testGroup.id);
+      expect(updatedMsgs.last.senderId, userService.profile.id);
     });
   });
 }

@@ -10,6 +10,7 @@ import 'package:elder_smartphone_learning_app/services/saved_lessons_service.dar
 import 'package:elder_smartphone_learning_app/services/search_service.dart';
 import 'package:elder_smartphone_learning_app/services/user_service.dart';
 import 'package:elder_smartphone_learning_app/services/voice_group_service.dart';
+import 'package:elder_smartphone_learning_app/services/audio/platform_audio.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -22,15 +23,60 @@ void main() {
       expect(loc.tr('next'), 'Next');
     });
 
-    test('switches to Hindi and Spanish', () {
+    test('switches between all 11 supported languages including Gujarati, Bengali, Marathi, Telugu, Tamil, Urdu, Kannada, Punjabi', () {
       final loc = LocalizationService();
-      loc.setLocale('hi');
-      expect(loc.currentLocale, 'hi');
-      expect(loc.tr('welcome'), 'स्वागत है');
+      expect(loc.supportedLanguages.length, 11);
 
+      // Hindi
+      loc.setLocale('hi');
+      expect(loc.tr('welcome'), 'स्वागत है');
+      expect(loc.tr('nav_learn'), 'सीखें');
+
+      // Gujarati
+      loc.setLocale('gu');
+      expect(loc.tr('welcome'), 'સ્વાગત છે');
+      expect(loc.tr('nav_learn'), 'શીખો');
+      expect(loc.tr('next'), 'આગળ');
+
+      // Bengali
+      loc.setLocale('bn');
+      expect(loc.tr('welcome'), 'স্বাগতম');
+      expect(loc.tr('nav_learn'), 'শিখুন');
+
+      // Marathi
+      loc.setLocale('mr');
+      expect(loc.tr('welcome'), 'सुस्वागतम');
+      expect(loc.tr('nav_learn'), 'शिका');
+
+      // Telugu
+      loc.setLocale('te');
+      expect(loc.tr('welcome'), 'స్వాగతం');
+      expect(loc.tr('nav_learn'), 'నేర్చుకోండి');
+
+      // Tamil
+      loc.setLocale('ta');
+      expect(loc.tr('welcome'), 'வணக்கம்');
+      expect(loc.tr('nav_learn'), 'கற்க');
+
+      // Urdu
+      loc.setLocale('ur');
+      expect(loc.tr('welcome'), 'خوش آمدید');
+      expect(loc.tr('nav_learn'), 'سیکھیں');
+
+      // Kannada
+      loc.setLocale('kn');
+      expect(loc.tr('welcome'), 'ಸ್ವಾಗತ');
+      expect(loc.tr('nav_learn'), 'ಕಲಿಯಿರಿ');
+
+      // Punjabi
+      loc.setLocale('pa');
+      expect(loc.tr('welcome'), 'ਜੀ ਆਇਆਂ ਨੂੰ');
+      expect(loc.tr('nav_learn'), 'ਸਿੱਖੋ');
+
+      // Spanish
       loc.setLocale('es');
-      expect(loc.currentLocale, 'es');
       expect(loc.tr('welcome'), 'Bienvenido');
+      expect(loc.tr('nav_learn'), 'Aprender');
     });
 
     test('returns key or English fallback for missing keys', () {
@@ -298,6 +344,28 @@ void main() {
 
       analytics.logEvent('voice_message_sent');
       expect(analytics.voiceMessagesSent, 1);
+    });
+  });
+
+  group('PlatformAudio', () {
+    test('records, stops and plays audio gracefully', () async {
+      final audio = getPlatformAudio();
+      expect(audio.isRecording, isFalse);
+      expect(audio.isPlaying, isFalse);
+
+      final started = await audio.startRecording();
+      expect(started, isTrue);
+      expect(audio.isRecording, isTrue);
+
+      final audioUrl = await audio.stopRecording();
+      expect(audio.isRecording, isFalse);
+      expect(audioUrl, isNotNull);
+
+      await audio.playAudio(audioUrl!, fallbackText: 'Test audio message');
+      expect(audio.isPlaying, isTrue);
+
+      audio.stopAudio();
+      expect(audio.isPlaying, isFalse);
     });
   });
 }

@@ -6,6 +6,7 @@ class VoiceMessage {
   final String senderPhoneMasked;
   final int durationSeconds;
   final String audioUrl;
+  final String speechText;
   final List<double> waveform;
   final DateTime timestamp;
   bool isListened;
@@ -18,6 +19,7 @@ class VoiceMessage {
     required this.senderPhoneMasked,
     required this.durationSeconds,
     required this.audioUrl,
+    this.speechText = '',
     required this.waveform,
     required this.timestamp,
     this.isListened = false,
@@ -34,6 +36,7 @@ class VoiceMessage {
       senderPhoneMasked: json['senderPhoneMasked'] as String? ?? '***-***-8888',
       durationSeconds: json['durationSeconds'] as int? ?? 12,
       audioUrl: json['audioUrl'] as String? ?? '',
+      speechText: json['speechText'] as String? ?? '',
       waveform: wave,
       timestamp: json['timestamp'] != null
           ? DateTime.parse(json['timestamp'] as String)
@@ -50,6 +53,7 @@ class VoiceMessage {
     'senderPhoneMasked': senderPhoneMasked,
     'durationSeconds': durationSeconds,
     'audioUrl': audioUrl,
+    'speechText': speechText,
     'waveform': waveform,
     'timestamp': timestamp.toIso8601String(),
     'isListened': isListened,

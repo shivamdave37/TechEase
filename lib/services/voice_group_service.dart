@@ -1,16 +1,19 @@
 import 'package:material_ui/material_ui.dart';
 import '../models/voice_group.dart';
 import '../models/voice_message.dart';
+import 'audio/platform_audio.dart';
 
 class VoiceGroupService extends ChangeNotifier {
   final List<VoiceGroup> _groups = [];
   final Map<String, List<VoiceMessage>> _messagesByGroupId = {};
   String? _currentlyPlayingMessageId;
   bool _isPlayingAudio = false;
+  final PlatformAudio _platformAudio = getPlatformAudio();
 
   List<VoiceGroup> get groups => List.unmodifiable(_groups);
   String? get currentlyPlayingMessageId => _currentlyPlayingMessageId;
   bool get isPlayingAudio => _isPlayingAudio;
+  PlatformAudio get platformAudio => _platformAudio;
 
   VoiceGroupService() {
     _seedInitialGroups();
@@ -59,13 +62,13 @@ class VoiceGroupService extends ChangeNotifier {
       description: 'Stay close with loved ones by leaving warm voice messages they can listen to at any time.',
       creatorId: 'elder_user_1',
       creatorName: 'You (Elder Learner)',
-      iconCode: 'family_restroom',
+      iconCode: 'favorite',
       inviteCode: 'FAMILY-202',
       createdAt: DateTime.now().subtract(const Duration(days: 20)),
       members: [
         GroupMember(
           userId: 'elder_user_1',
-          displayName: 'You (Creator)',
+          displayName: 'You (Elder Learner)',
           maskedPhone: '***-***-7890',
           role: 'creator',
           joinedAt: DateTime.now().subtract(const Duration(days: 20)),
@@ -91,6 +94,7 @@ class VoiceGroupService extends ChangeNotifier {
         senderPhoneMasked: '***-***-4321',
         durationSeconds: 15,
         audioUrl: 'sample_audio_1',
+        speechText: 'Hello everyone! Welcome to our smartphone learning group. Today we practiced sending photos on WhatsApp. Please let us know if you need any help!',
         waveform: [0.3, 0.6, 0.8, 0.4, 0.9, 0.7, 0.5, 0.3],
         timestamp: DateTime.now().subtract(const Duration(hours: 2)),
       ),
@@ -102,6 +106,7 @@ class VoiceGroupService extends ChangeNotifier {
         senderPhoneMasked: '***-***-1122',
         durationSeconds: 22,
         audioUrl: 'sample_audio_2',
+        speechText: 'Good morning Mary! That photo tutorial was really helpful. I just sent a photo of my garden to my daughter this morning.',
         waveform: [0.2, 0.5, 0.9, 0.8, 0.6, 0.9, 0.4, 0.2],
         timestamp: DateTime.now().subtract(const Duration(minutes: 45)),
       ),
@@ -116,6 +121,7 @@ class VoiceGroupService extends ChangeNotifier {
         senderPhoneMasked: '***-***-9988',
         durationSeconds: 18,
         audioUrl: 'sample_audio_3',
+        speechText: 'Hi Grandpa! I hope you are having a wonderful day. Give me a call whenever you have free time, love you!',
         waveform: [0.4, 0.8, 0.7, 0.9, 0.5, 0.8, 0.6, 0.4],
         timestamp: DateTime.now().subtract(const Duration(hours: 4)),
       ),
@@ -203,6 +209,8 @@ class VoiceGroupService extends ChangeNotifier {
     required String senderName,
     required int durationSeconds,
     required List<double> waveform,
+    String? audioUrl,
+    String? speechText,
   }) {
     final msg = VoiceMessage(
       id: 'msg_${DateTime.now().millisecondsSinceEpoch}',
@@ -211,7 +219,8 @@ class VoiceGroupService extends ChangeNotifier {
       senderName: senderName,
       senderPhoneMasked: '***-***-7890',
       durationSeconds: durationSeconds,
-      audioUrl: 'local_record_${DateTime.now().millisecondsSinceEpoch}',
+      audioUrl: audioUrl ?? 'local_record_${DateTime.now().millisecondsSinceEpoch}',
+      speechText: speechText ?? 'Voice message sent by $senderName',
       waveform: waveform,
       timestamp: DateTime.now(),
     );
@@ -222,15 +231,45 @@ class VoiceGroupService extends ChangeNotifier {
 
   void playMessage(String messageId) {
     if (_currentlyPlayingMessageId == messageId && _isPlayingAudio) {
+      _platformAudio.stopAudio();
       _isPlayingAudio = false;
-    } else {
-      _currentlyPlayingMessageId = messageId;
-      _isPlayingAudio = true;
+      _currentlyPlayingMessageId = null;
+      notifyListeners();
+      return;
     }
+
+    VoiceMessage? targetMsg;
+    for (final list in _messagesByGroupId.values) {
+      for (final m in list) {
+        if (m.id == messageId) {
+          targetMsg = m;
+          break;
+        }
+      }
+      if (targetMsg != null) break;
+    }
+
+    if (targetMsg == null) return;
+
+    _currentlyPlayingMessageId = messageId;
+    _isPlayingAudio = true;
     notifyListeners();
+
+    _platformAudio.playAudio(
+      targetMsg.audioUrl,
+      fallbackText: targetMsg.speechText.isNotEmpty
+          ? targetMsg.speechText
+          : 'Voice message from ${targetMsg.senderName}',
+      onComplete: () {
+        _isPlayingAudio = false;
+        _currentlyPlayingMessageId = null;
+        notifyListeners();
+      },
+    );
   }
 
   void stopAudio() {
+    _platformAudio.stopAudio();
     _isPlayingAudio = false;
     _currentlyPlayingMessageId = null;
     notifyListeners();
