@@ -31,7 +31,11 @@ if __name__ == "__main__":
         print(f"Local Network URL:  http://192.168.31.71:{PORT}/")
         print("=" * 60)
         print("Press Ctrl+C to stop.")
-        try:
-            httpd.serve_forever()
-        except KeyboardInterrupt:
-            print("\nServer stopped.")
+        while True:
+            try:
+                httpd.serve_forever()
+            except KeyboardInterrupt:
+                print("\nServer stopped.")
+                break
+            except Exception as e:
+                print(f"Exception encountered: {e}")
