@@ -45,7 +45,7 @@ class ShareToPhoneDialog extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Open on Another Phone',
+                          'Open TechEase on Phone',
                           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 2),

@@ -1,6 +1,6 @@
 {
-    "name": "Elderly Smartphone Learning App",
-    "short_name": "Elder Learn",
+    "name": "TechEase",
+    "short_name": "TechEase",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#1B5E20",

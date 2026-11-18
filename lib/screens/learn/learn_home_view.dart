@@ -29,7 +29,41 @@ class LearnHomeView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(loc.tr('learn_title'), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.touch_app_rounded, color: Theme.of(context).primaryColor, size: 20),
+                  const SizedBox(width: 4),
+                  Text(
+                    'TechEase',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w900,
+                      fontSize: 18,
+                      color: Theme.of(context).primaryColor,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                loc.tr('learn_title'),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
         actions: [
           IconButton(
             tooltip: 'Open / Share to Phone',

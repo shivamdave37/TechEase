@@ -52,17 +52,35 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
           title: Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(6),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: const [
+                    BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 1)),
+                  ],
                 ),
-                child: Icon(Icons.school, color: Theme.of(context).primaryColor, size: 24),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.touch_app_rounded, color: Theme.of(context).primaryColor, size: 22),
+                    const SizedBox(width: 6),
+                    Text(
+                      'TechEase',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w900,
+                        fontSize: 21,
+                        color: Theme.of(context).primaryColor,
+                        letterSpacing: 0.6,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 14),
               Text(
-                loc.tr('app_title'),
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                loc.tr('learn_title'),
+                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
               ),
             ],
           ),

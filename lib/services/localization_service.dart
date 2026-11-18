@@ -31,7 +31,7 @@ class LocalizationService extends ChangeNotifier {
   // Dictionary of localized UI strings
   static final Map<String, Map<String, String>> _localizedStrings = {
     'en': {
-      'app_title': 'Elderly Learning App',
+      'app_title': 'TechEase',
       'welcome': 'Welcome',
       'learn_title': 'Learn Smartphone Skills',
       'learn_subtitle': 'Tap any topic below to learn step-by-step with simple pictures and instructions.',
@@ -78,7 +78,7 @@ class LocalizationService extends ChangeNotifier {
       'try_again': 'Try Again',
     },
     'hi': {
-      'app_title': 'स्मार्टफोन सीखो ऐप',
+      'app_title': 'TechEase (टेक-ईज़)',
       'welcome': 'स्वागत है',
       'learn_title': 'स्मार्टफोन चलाना सीखें',
       'learn_subtitle': 'आसान तस्वीरों और सरल निर्देशों के साथ सीखने के लिए नीचे किसी भी विषय को छुएं।',
@@ -125,7 +125,7 @@ class LocalizationService extends ChangeNotifier {
       'try_again': 'पुनः प्रयास करें',
     },
     'gu': {
-      'app_title': 'વરિષ્ઠ સ્માર્ટફોન શિક્ષણ',
+      'app_title': 'TechEase (ટેક-ઈઝ)',
       'welcome': 'સ્વાગત છે',
       'learn_title': 'સ્માર્ટફોન ચલાવતા શીખો',
       'learn_subtitle': 'સરળ ચિત્રો અને માર્ગદર્શન સાથે શીખવા માટે નીચે કોઈપણ વિષય પર ટચ કરો.',
@@ -172,7 +172,7 @@ class LocalizationService extends ChangeNotifier {
       'try_again': 'ફરીથી પ્રયાસ કરો',
     },
     'bn': {
-      'app_title': 'প্রবীণ স্মার্টফোন শিক্ষা',
+      'app_title': 'TechEase (টেক-ইজ)',
       'welcome': 'স্বাগতম',
       'learn_title': 'স্মার্টফোন চালানো শিখুন',
       'learn_subtitle': 'সহজ ছবি ও নির্দেশের সাহায্যে ধাপে ধাপে শিখতে নিচের যেকোনো বিষয়ে স্পর্শ করুন।',
@@ -219,7 +219,7 @@ class LocalizationService extends ChangeNotifier {
       'try_again': 'আবার চেষ্টা করুন',
     },
     'mr': {
-      'app_title': 'ज्येष्ठ नागरिक स्मार्टफोन शिक्षण',
+      'app_title': 'TechEase (टेक-ईझ)',
       'welcome': 'सुस्वागतम',
       'learn_title': 'स्मार्टफोन चालवायला शिका',
       'learn_subtitle': 'सोपी चित्रे आणि मार्गदर्शनासह शिकण्यासाठी खालील विषयावर टॅप करा.',
@@ -266,7 +266,7 @@ class LocalizationService extends ChangeNotifier {
       'try_again': 'पुन्हा प्रयत्न करा',
     },
     'te': {
-      'app_title': 'పెద్దల స్మార్ట్‌ఫోన్ శిక్షణ',
+      'app_title': 'TechEase (టెక్‌ఈజ్)',
       'welcome': 'స్వాగతం',
       'learn_title': 'స్మార్ట్‌ఫోన్ వాడటం నేర్చుకోండి',
       'learn_subtitle': 'సులభమైన చిత్రాలతో దశలవారీగా నేర్చుకోవడానికి దిగువన ఏదైనా అంశాన్ని తాకండి.',
@@ -313,7 +313,7 @@ class LocalizationService extends ChangeNotifier {
       'try_again': 'మళ్ళీ ప్రయత్నించండి',
     },
     'ta': {
-      'app_title': 'முதியோர் ஸ்மார்ட்போன் கற்றல்',
+      'app_title': 'TechEase (டெக்ஈஸ்)',
       'welcome': 'வணக்கம்',
       'learn_title': 'ஸ்மார்ட்போன் பயன்படுத்த கற்றுக்கொள்ளுங்கள்',
       'learn_subtitle': 'எளிய படங்களுடன் படிப்படியாக கற்க கீழே உள்ள தலைப்பைத் தொடவும்.',
@@ -360,7 +360,7 @@ class LocalizationService extends ChangeNotifier {
       'try_again': 'மீண்டும் முயற்சிக்கவும்',
     },
     'ur': {
-      'app_title': 'بزرگوں کے لیے اسمارٹ فون سیکھیں',
+      'app_title': 'TechEase (ٹیک ایز)',
       'welcome': 'خوش آمدید',
       'learn_title': 'اسمارٹ فون چلانا سیکھیں',
       'learn_subtitle': 'آسان تصاویر اور ہدایات کے ساتھ مرحلہ وار سیکھنے کے لیے نیچے دیے گئے کسی بھی عنوان پر ٹیپ کریں۔',
@@ -407,7 +407,7 @@ class LocalizationService extends ChangeNotifier {
       'try_again': 'دوبارہ کوشش کریں',
     },
     'kn': {
-      'app_title': 'ಹಿರಿಯರ ಸ್ಮಾರ್ಟ್‌ಫೋನ್ ಕಲಿಕೆ',
+      'app_title': 'TechEase (ಟೆಕ್-ಈಸ್)',
       'welcome': 'ಸ್ವಾಗತ',
       'learn_title': 'ಸ್ಮಾರ್ಟ್‌ಫೋನ್ ಬಳಸಲು ಕಲಿಯಿರಿ',
       'learn_subtitle': 'ಸರಳ ಚಿತ್ರಗಳೊಂದಿಗೆ ಹಂತ-ಹಂತವಾಗಿ ಕಲಿಯಲು ಕೆಳಗಿನ ಯಾವುದೇ ವಿಷಯವನ್ನು ಒತ್ತಿ.',
@@ -454,7 +454,7 @@ class LocalizationService extends ChangeNotifier {
       'try_again': 'ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ',
     },
     'pa': {
-      'app_title': 'ਬਜ਼ੁਰਗਾਂ ਲਈ ਸਮਾਰਟਫੋਨ ਸਿੱਖਿਆ',
+      'app_title': 'TechEase (ਟੈਕ-ਈਜ਼)',
       'welcome': 'ਜੀ ਆਇਆਂ ਨੂੰ',
       'learn_title': 'ਸਮਾਰਟਫੋਨ ਚਲਾਉਣਾ ਸਿੱਖੋ',
       'learn_subtitle': 'ਸੌਖੀਆਂ ਤਸਵੀਰਾਂ ਅਤੇ ਨਿਰਦੇਸ਼ਾਂ ਨਾਲ ਸਿੱਖਣ ਲਈ ਹੇਠਾਂ ਕਿਸੇ ਵੀ ਵਿਸ਼ੇ ਨੂੰ ਛੂਹੋ।',
@@ -501,7 +501,7 @@ class LocalizationService extends ChangeNotifier {
       'try_again': 'ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ',
     },
     'es': {
-      'app_title': 'Aprende Smartphone',
+      'app_title': 'TechEase',
       'welcome': 'Bienvenido',
       'learn_title': 'Aprende a Usar tu Smartphone',
       'learn_subtitle': 'Toca cualquier tema abajo para aprender paso a paso con imágenes sencillas.',
