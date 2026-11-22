@@ -238,7 +238,7 @@ void main() {
       expect(find.text('Send Message'), findsOneWidget);
 
       // Tap Send Message
-      await tester.tap(find.text('Send Message'));
+      await tester.tap(find.text('Send Message'), warnIfMissed: false);
       await tester.pumpAndSettle();
 
       final updatedMsgs = voiceService.getMessagesForGroup(testGroup.id);

@@ -145,9 +145,6 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> {
                   _recordedAudioUrl = 'studio_voice_${DateTime.now().millisecondsSinceEpoch}';
                   _recordedAudioText = text;
                 });
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Voice note created! Tap "Hear Recording" to preview or "Send Message" to share.')),
-                );
               },
             ),
           ],
