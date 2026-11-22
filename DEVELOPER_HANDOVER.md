@@ -8,9 +8,9 @@ Welcome to the **TechEase** project! This document contains all the essential ar
 
 **TechEase** is a senior-first smartphone learning, community video sharing, and voice-group messaging application built in Flutter. It is designed specifically for elderly users who need an intuitive, accessible, and respectful way to master digital skills independently.
 
-* **GitHub Repository:** [https://github.com/shivamdave37/design-thinking-](https://github.com/shivamdave37/design-thinking-)
+* **GitHub Repository:** [https://github.com/shivamdave37/design-thinking-project](https://github.com/shivamdave37/design-thinking-project)
 * **Primary Branch:** `master`
-* **Live Web App:** [https://shivamdave37.github.io/design-thinking-/](https://shivamdave37.github.io/design-thinking-/)
+* **Live Web App:** [https://shivamdave37.github.io/design-thinking-project/](https://shivamdave37.github.io/design-thinking-project/)
 * **Target Platforms:** Android (Release APK & Google Play ready), Responsive Web (PWA installable on iOS/Android).
 
 ---
@@ -85,8 +85,8 @@ elder_smartphone_learning_app/
 ### Commands:
 ```bash
 # 1. Clone repository
-git clone https://github.com/shivamdave37/design-thinking-.git
-cd design-thinking-/elder_smartphone_learning_app
+git clone https://github.com/shivamdave37/design-thinking-project.git
+cd design-thinking-project
 
 # 2. Install dependencies
 flutter pub get
@@ -115,7 +115,7 @@ flutter build web --release
 | **Global Font Scaling** | 🟢 100% Complete | `MediaQuery.textScaler` physically scales all UI text dynamically across the entire app. |
 | **Anti-Fake Guide Hub** | 🟢 100% Complete | Community video upload with mandatory authenticity pledge and `🛡️ Verified Safe Guide` badges. |
 | **Phone Number OTP Login** | 🟡 Demo Mode Active | Functional UI with country code picker and demo verification (`1234`). Integrate Twilio or Firebase Phone Auth for live cellular SMS. |
-| **Video Player Modal** | 🟡 Control Shell Active | Video player modal renders playback controls. Integrate embedded HTML5 `<video>` or `video_player_web` for hosted `.mp4` streaming. |
+| **Video Player Modal** | 🟢 100% Complete | Running video guide engine with step simulation, synchronized voiceover narration, and high-contrast captions. |
 | **Cloud Sync** | 🟡 Local-First Ready | Service architecture matches Cloud Firestore 1-to-1. Add `google-services.json` to activate cloud sync across multiple remote devices. |
 
 ---
@@ -124,7 +124,7 @@ flutter build web --release
 
 The repository has an automated GitHub Actions workflow in `.github/workflows/deploy.yml`:
 1. On every push to `master`, GitHub Actions automatically runs `flutter analyze` and `flutter test`.
-2. It builds the Flutter Web release bundle with base href `/design-thinking-/`.
+2. It builds the Flutter Web release bundle with base href `/design-thinking-project/`.
 3. It automatically deploys the built web files to the **`gh-pages`** branch.
 4. It compiles a release Android APK (`app-release.apk`) and uploads it as a downloadable GitHub Actions artifact.
 

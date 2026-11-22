@@ -3,8 +3,8 @@
 > A respectful, accessible, and intuitive smartphone learning, scam protection, and voice-group application designed specifically for elderly users.
 
 [![Flutter](https://img.shields.io/badge/Flutter-3.50.0-02569B?logo=flutter)](https://flutter.dev)
-[![Tests](https://img.shields.io/badge/Tests-50%20Passed-brightgreen)](https://github.com/shivamdave37/design-thinking-/actions)
-[![Live Web App](https://img.shields.io/badge/Live-GitHub%20Pages-blue)](https://shivamdave37.github.io/design-thinking-/)
+[![Tests](https://img.shields.io/badge/Tests-52%20Passed-brightgreen)](https://github.com/shivamdave37/design-thinking-project/actions)
+[![Live Web App](https://img.shields.io/badge/Live-GitHub%20Pages-blue)](https://shivamdave37.github.io/design-thinking-project/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 ---
@@ -34,13 +34,13 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/shivamdave37/design-thinking-.git
-cd design-thinking-
+git clone https://github.com/shivamdave37/design-thinking-project.git
+cd design-thinking-project
 
 # Install dependencies
 flutter pub get
 
-# Run all 50 tests
+# Run all 52 tests
 flutter test
 
 # Run on Chrome
@@ -62,5 +62,5 @@ flutter build web --release
 
 ## 🌐 Live Web Links
 
-* **Public Web Link:** [https://shivamdave37.github.io/design-thinking-/](https://shivamdave37.github.io/design-thinking-/)
-* **GitHub Repository:** [https://github.com/shivamdave37/design-thinking-](https://github.com/shivamdave37/design-thinking-)
+* **Public Web Link:** [https://shivamdave37.github.io/design-thinking-project/](https://shivamdave37.github.io/design-thinking-project/)
+* **GitHub Repository:** [https://github.com/shivamdave37/design-thinking-project](https://github.com/shivamdave37/design-thinking-project)
