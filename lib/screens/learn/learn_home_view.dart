@@ -1,7 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 import '../../design_system.dart';
-import '../../models/category.dart';
 import '../../services/learning_service.dart';
 import '../../services/localization_service.dart';
 import '../../services/saved_lessons_service.dart';
@@ -106,13 +105,6 @@ class LearnHomeView extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  String _getTimeGreeting() {
-    final hour = DateTime.now().hour;
-    if (hour < 12) return 'Good morning';
-    if (hour < 17) return 'Good afternoon';
-    return 'Good evening';
   }
 
   @override

@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 
 import '../design_system.dart';
 import '../models/lesson.dart';
-import '../services/accessibility_service.dart';
 import '../services/audio/platform_audio.dart';
 import '../services/learning_service.dart';
 import '../services/saved_lessons_service.dart';
@@ -81,7 +80,6 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
   Widget build(BuildContext context) {
     final steps = widget.lesson.steps;
     final saved = Provider.of<SavedLessonsService>(context);
-    final accessibility = Provider.of<AccessibilityService>(context);
     final isBookmarked = saved.isBookmarked(widget.lesson.id);
 
     final imageHeight = (MediaQuery.of(context).size.height * 0.3)
