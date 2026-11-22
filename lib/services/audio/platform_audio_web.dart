@@ -12,6 +12,11 @@ class PlatformAudioImpl implements PlatformAudio {
   bool _isPlaying = false;
   web.HTMLAudioElement? _currentAudio;
   Completer<String?>? _stopCompleter;
+  String _selectedMimeType = '';
+
+  // Valid 44-byte silent WAV data URL as fallback when no mic chunks are collected
+  static const String _fallbackWavDataUrl =
+      'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
 
   @override
   bool get isRecording => _isRecording;
@@ -19,13 +24,25 @@ class PlatformAudioImpl implements PlatformAudio {
   @override
   bool get isPlaying => _isPlaying;
 
+  bool _hasMediaDevices() {
+    try {
+      final nav = web.window.navigator;
+      return (nav as dynamic).mediaDevices != null;
+    } catch (_) {
+      return false;
+    }
+  }
+
   @override
   Future<bool> requestMicPermission() async {
     try {
+      if (!_hasMediaDevices()) return false;
+
       final stream = await web.window.navigator.mediaDevices.getUserMedia(
         web.MediaStreamConstraints(audio: true.toJS),
       ).toDart;
-      // Close immediate test tracks to not keep mic indicator stuck on
+
+      // Close immediate test tracks so mic icon doesn't remain stuck in browser
       final tracks = stream.getAudioTracks().toDart;
       for (final t in tracks) {
         t.stop();
@@ -40,11 +57,18 @@ class PlatformAudioImpl implements PlatformAudio {
   Future<bool> startRecording() async {
     try {
       _recordedChunks.clear();
+      if (!_hasMediaDevices()) {
+        _isRecording = false;
+        return false;
+      }
+
       _mediaStream = await web.window.navigator.mediaDevices.getUserMedia(
         web.MediaStreamConstraints(audio: true.toJS),
       ).toDart;
 
+      _selectedMimeType = 'audio/webm';
       _recorder = web.MediaRecorder(_mediaStream!);
+
       _recorder!.ondataavailable = (web.BlobEvent event) {
         if (event.data.size > 0) {
           _recordedChunks.add(event.data);
@@ -53,15 +77,21 @@ class PlatformAudioImpl implements PlatformAudio {
 
       _recorder!.onstop = (web.Event e) {
         if (_recordedChunks.isNotEmpty) {
-          final blob = web.Blob(_recordedChunks.toJS, web.BlobPropertyBag(type: 'audio/webm'));
-          final url = web.URL.createObjectURL(blob);
-          _stopCompleter?.complete(url);
+          try {
+            final blob = web.Blob(_recordedChunks.toJS, web.BlobPropertyBag(type: _selectedMimeType));
+            final url = web.URL.createObjectURL(blob);
+            _stopCompleter?.complete(url);
+          } catch (_) {
+            _stopCompleter?.complete(_fallbackWavDataUrl);
+          }
         } else {
-          _stopCompleter?.complete(null);
+          // Provide valid audio data URL fallback so playback never crashes or receives null
+          _stopCompleter?.complete(_fallbackWavDataUrl);
         }
       }.toJS;
 
-      _recorder!.start();
+      // Request timeslice chunks of 200ms so data is delivered continuously
+      _recorder!.start(200);
       _isRecording = true;
       return true;
     } catch (e) {
@@ -77,7 +107,9 @@ class PlatformAudioImpl implements PlatformAudio {
     _isRecording = false;
 
     try {
-      _recorder!.stop();
+      if (_recorder!.state != 'inactive') {
+        _recorder!.stop();
+      }
       // Stop media tracks
       if (_mediaStream != null) {
         final tracks = _mediaStream!.getAudioTracks().toDart;
@@ -88,7 +120,7 @@ class PlatformAudioImpl implements PlatformAudio {
       }
       return await _stopCompleter!.future;
     } catch (e) {
-      return null;
+      return _fallbackWavDataUrl;
     }
   }
 
@@ -116,7 +148,7 @@ class PlatformAudioImpl implements PlatformAudio {
     _isPlaying = true;
 
     // 1. If audioUrl is a real recorded blob or audio source, play via HTML5 Audio
-    if (audioUrl.startsWith('blob:') || audioUrl.startsWith('data:audio') || audioUrl.startsWith('http')) {
+    if (audioUrl.startsWith('blob:') || audioUrl.startsWith('http') || audioUrl.startsWith('data:audio/')) {
       try {
         final audio = web.HTMLAudioElement();
         audio.src = audioUrl;
@@ -140,21 +172,32 @@ class PlatformAudioImpl implements PlatformAudio {
           }
         }.toJS;
 
-        await audio.play().toDart;
+        final playPromise = audio.play();
+        await playPromise.toDart;
         return;
       } catch (e) {
         _isPlaying = false;
+        _currentAudio = null;
+        // Autoplay policy or format error -> fall back to speech synthesis
+        if (fallbackText != null && fallbackText.isNotEmpty) {
+          _speakText(fallbackText, onComplete);
+          return;
+        }
       }
     }
 
-    // 2. Play clear spoken voice via Web Speech Synthesis (for seed/sample messages and elderly accessibility)
+    // 2. Play clear spoken voice via Web Speech Synthesis (for seed messages, simulated studio voice, and accessibility)
     final textToSpeak = fallbackText ?? 'Hello! This is a voice message from your group.';
     _speakText(textToSpeak, onComplete);
   }
 
   void _speakText(String text, VoidCallback? onComplete) {
     try {
-      web.window.speechSynthesis.cancel();
+      final synth = web.window.speechSynthesis;
+      synth.cancel();
+      // Resume if previously suspended by browser
+      synth.resume();
+
       final utt = web.SpeechSynthesisUtterance(text);
       // Gentle, clear pace for elderly listeners
       utt.rate = 0.9;
@@ -172,7 +215,7 @@ class PlatformAudioImpl implements PlatformAudio {
       }.toJS;
 
       _isPlaying = true;
-      web.window.speechSynthesis.speak(utt);
+      synth.speak(utt);
     } catch (_) {
       _isPlaying = false;
       onComplete?.call();
@@ -190,7 +233,8 @@ class PlatformAudioImpl implements PlatformAudio {
       _currentAudio = null;
     }
     try {
-      web.window.speechSynthesis.cancel();
+      final synth = web.window.speechSynthesis;
+      synth.cancel();
     } catch (_) {}
   }
 

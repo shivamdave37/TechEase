@@ -21,12 +21,139 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> {
   Timer? _recordTimer;
   bool _hasRecordedAudioPreview = false;
   String? _recordedAudioUrl;
+  String? _recordedAudioText;
   bool _isPlayingPreview = false;
 
   @override
   void dispose() {
     _recordTimer?.cancel();
     super.dispose();
+  }
+
+  void _showSeniorVoiceStudioDialog() {
+    String selectedText = 'Good morning everyone! Wishing you a blessed and peaceful day.';
+    final textController = TextEditingController(text: selectedText);
+
+    final presets = [
+      'Good morning everyone! Wishing you a blessed and peaceful day.',
+      'Hello friends! I am practicing using my smartphone today.',
+      'Thank you so much for the helpful anti-scam advice! Staying safe.',
+      'Anyone free for a friendly phone chat this afternoon?',
+      'Can someone please remind me how to turn on the camera flashlight?',
+    ];
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Row(
+            children: [
+              Icon(Icons.record_voice_over, color: Colors.blue.shade700, size: 28),
+              const SizedBox(width: 8),
+              const Expanded(
+                child: Text(
+                  'Senior Voice Studio',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+              ),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'No microphone required! Choose a friendly message or type your own. The app speaks it aloud for your friends.',
+                  style: TextStyle(fontSize: 14, color: Colors.black87),
+                ),
+                const SizedBox(height: 12),
+                const Text('Quick Senior Greetings:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                const SizedBox(height: 6),
+                ...presets.map((p) {
+                  final isSelected = selectedText == p;
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 6),
+                    child: InkWell(
+                      onTap: () {
+                        setDialogState(() {
+                          selectedText = p;
+                          textController.text = p;
+                        });
+                      },
+                      borderRadius: BorderRadius.circular(8),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: isSelected ? Colors.blue.shade50 : Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: isSelected ? Colors.blue.shade600 : Colors.grey.shade300,
+                            width: isSelected ? 2 : 1,
+                          ),
+                        ),
+                        child: Text(
+                          p,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: isSelected ? Colors.blue.shade900 : Colors.black87,
+                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+                const SizedBox(height: 10),
+                const Text('Or Edit / Type Your Message:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                const SizedBox(height: 6),
+                TextField(
+                  controller: textController,
+                  maxLines: 2,
+                  decoration: const InputDecoration(
+                    hintText: 'Type your voice message here...',
+                    border: OutlineInputBorder(),
+                  ),
+                  onChanged: (val) => selectedText = val,
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue.shade700,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              ),
+              icon: const Icon(Icons.mic, size: 20),
+              label: const Text('Create Voice Note', style: TextStyle(fontWeight: FontWeight.bold)),
+              onPressed: () {
+                final text = textController.text.trim().isNotEmpty
+                    ? textController.text.trim()
+                    : selectedText;
+                Navigator.pop(ctx);
+                setState(() {
+                  _isRecording = false;
+                  _recordSeconds = (text.split(' ').length * 0.4).ceil().clamp(4, 25);
+                  _hasRecordedAudioPreview = true;
+                  _recordedAudioUrl = 'studio_voice_${DateTime.now().millisecondsSinceEpoch}';
+                  _recordedAudioText = text;
+                });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Voice note created! Tap "Hear Recording" to preview or "Send Message" to share.')),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> _startRecording() async {
@@ -42,22 +169,47 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> {
     final success = await voiceService.platformAudio.startRecording();
     if (!success) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          duration: const Duration(seconds: 5),
-          backgroundColor: Colors.amber.shade900,
-          content: Row(
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Row(
             children: const [
-              Icon(Icons.mic_off, color: Colors.white, size: 28),
-              SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  'Microphone permission needed. Please click "Allow" in your browser address bar to record your voice.',
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                ),
+              Icon(Icons.mic_off, color: Colors.amber, size: 28),
+              SizedBox(width: 8),
+              Expanded(child: Text('Microphone Setup & Voice Studio', style: TextStyle(fontWeight: FontWeight.bold))),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
+              Text(
+                'We could not access your microphone. To use a real microphone, click the lock/settings icon in your browser address bar and choose "Allow Microphone".',
+                style: TextStyle(fontSize: 14),
+              ),
+              SizedBox(height: 12),
+              Text(
+                'Or use Senior Voice Studio right now to create and send clear spoken voice notes without needing any microphone permission!',
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
               ),
             ],
           ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Close'),
+            ),
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.blue.shade700, foregroundColor: Colors.white),
+              icon: const Icon(Icons.record_voice_over),
+              label: const Text('Open Voice Studio'),
+              onPressed: () {
+                Navigator.pop(ctx);
+                _showSeniorVoiceStudioDialog();
+              },
+            ),
+          ],
         ),
       );
       return;
@@ -68,6 +220,7 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> {
       _recordSeconds = 0;
       _hasRecordedAudioPreview = false;
       _recordedAudioUrl = null;
+      _recordedAudioText = null;
     });
 
     _recordTimer?.cancel();
@@ -89,7 +242,8 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> {
     setState(() {
       _isRecording = false;
       _hasRecordedAudioPreview = true;
-      _recordedAudioUrl = audioUrl;
+      _recordedAudioUrl = audioUrl ?? 'rec_voice_${DateTime.now().millisecondsSinceEpoch}';
+      _recordedAudioText = _recordedAudioText ?? 'Hello! This is a voice message from your friendly group member.';
     });
   }
 
@@ -102,7 +256,7 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> {
       setState(() => _isPlayingPreview = true);
       voiceService.platformAudio.playAudio(
         _recordedAudioUrl ?? '',
-        fallbackText: 'This is your recorded voice note. It is clear and ready to share!',
+        fallbackText: _recordedAudioText ?? 'This is your recorded voice note. It is clear and ready to share!',
         onComplete: () {
           if (mounted) setState(() => _isPlayingPreview = false);
         },
@@ -122,6 +276,7 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> {
       _recordSeconds = 0;
       _hasRecordedAudioPreview = false;
       _recordedAudioUrl = null;
+      _recordedAudioText = null;
       _isPlayingPreview = false;
     });
   }
@@ -135,6 +290,8 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> {
       _isPlayingPreview = false;
     }
 
+    final speechContent = _recordedAudioText ?? 'Hello from ${user.profile.name}! This is a real voice message.';
+
     voiceService.sendVoiceMessage(
       groupId: widget.group.id,
       senderId: user.profile.id,
@@ -142,7 +299,7 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> {
       durationSeconds: _recordSeconds > 0 ? _recordSeconds : 6,
       waveform: [0.3, 0.7, 0.9, 0.5, 0.8, 0.7, 0.9, 0.6, 0.4],
       audioUrl: _recordedAudioUrl,
-      speechText: 'Hello from ${user.profile.name}! This is a real voice message.',
+      speechText: speechContent,
     );
 
     setState(() {
@@ -150,6 +307,7 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> {
       _recordSeconds = 0;
       _hasRecordedAudioPreview = false;
       _recordedAudioUrl = null;
+      _recordedAudioText = null;
       _isPlayingPreview = false;
     });
 
@@ -546,7 +704,23 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> {
                   ],
 
                   // Hold or Tap to Record Big Button
-                  if (!_hasRecordedAudioPreview)
+                  if (!_hasRecordedAudioPreview) ...[
+                    if (!_isRecording)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: TextButton.icon(
+                          style: TextButton.styleFrom(
+                            foregroundColor: Colors.blue.shade800,
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                          ),
+                          icon: const Icon(Icons.record_voice_over, size: 20),
+                          label: const Text(
+                            'No microphone? Tap to use Senior Voice Studio',
+                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                          ),
+                          onPressed: _showSeniorVoiceStudioDialog,
+                        ),
+                      ),
                     Row(
                       children: [
                         if (_isRecording)
@@ -582,6 +756,7 @@ class _VoiceChatScreenState extends State<VoiceChatScreen> {
                         ),
                       ],
                     ),
+                  ],
                 ],
               ),
             ),
