@@ -15,6 +15,12 @@ class UserProfile {
   List<String> completedLessonIds;
   Map<String, int> lessonStepProgress; // lessonId -> lastStepIndex
 
+  // Senior-First Assistance & Motivation features
+  String familyContactName;
+  String familyContactPhone;
+  int learningStreakDays;
+  List<String> earnedBadges;
+
   UserProfile({
     required this.id,
     required this.name,
@@ -31,10 +37,15 @@ class UserProfile {
     List<String>? bookmarkedLessonIds,
     List<String>? completedLessonIds,
     Map<String, int>? lessonStepProgress,
+    this.familyContactName = 'Daughter Sarah',
+    this.familyContactPhone = '+91 98765 12345',
+    this.learningStreakDays = 3,
+    List<String>? earnedBadges,
   })  : blockedUserIds = blockedUserIds ?? [],
         bookmarkedLessonIds = bookmarkedLessonIds ?? [],
         completedLessonIds = completedLessonIds ?? [],
-        lessonStepProgress = lessonStepProgress ?? {};
+        lessonStepProgress = lessonStepProgress ?? {},
+        earnedBadges = earnedBadges ?? ['starter_badge', 'whatsapp_badge'];
 
   factory UserProfile.defaultProfile() {
     return UserProfile(
@@ -50,6 +61,10 @@ class UserProfile {
       bookmarkedLessonIds: ['lesson1'],
       completedLessonIds: [],
       lessonStepProgress: {'lesson1': 1},
+      familyContactName: 'Daughter Sarah',
+      familyContactPhone: '+91 98765 12345',
+      learningStreakDays: 3,
+      earnedBadges: ['starter_badge', 'whatsapp_badge'],
     );
   }
 
@@ -69,6 +84,10 @@ class UserProfile {
       completedLessonIds: (json['completedLessonIds'] as List<dynamic>? ?? []).cast<String>(),
       lessonStepProgress: (json['lessonStepProgress'] as Map<String, dynamic>? ?? {})
           .map((k, v) => MapEntry(k, v as int)),
+      familyContactName: json['familyContactName'] as String? ?? 'Daughter Sarah',
+      familyContactPhone: json['familyContactPhone'] as String? ?? '+91 98765 12345',
+      learningStreakDays: json['learningStreakDays'] as int? ?? 3,
+      earnedBadges: (json['earnedBadges'] as List<dynamic>? ?? ['starter_badge', 'whatsapp_badge']).cast<String>(),
     );
   }
 
@@ -86,5 +105,9 @@ class UserProfile {
     'bookmarkedLessonIds': bookmarkedLessonIds,
     'completedLessonIds': completedLessonIds,
     'lessonStepProgress': lessonStepProgress,
+    'familyContactName': familyContactName,
+    'familyContactPhone': familyContactPhone,
+    'learningStreakDays': learningStreakDays,
+    'earnedBadges': earnedBadges,
   };
 }

@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 
 import '../design_system.dart';
 import '../models/lesson.dart';
+import '../services/accessibility_service.dart';
+import '../services/audio/platform_audio.dart';
 import '../services/learning_service.dart';
 import '../services/saved_lessons_service.dart';
 import '../widgets/zoomable_image_viewer.dart';
@@ -18,10 +20,13 @@ class LessonPlayerScreen extends StatefulWidget {
 
 class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
   int _currentIndex = 0;
+  late final PlatformAudio _audio;
+  bool _isSpeaking = false;
 
   @override
   void initState() {
     super.initState();
+    _audio = getPlatformAudio();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       final saved = Provider.of<SavedLessonsService>(context, listen: false);
@@ -32,8 +37,18 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
     });
   }
 
+  @override
+  void dispose() {
+    _audio.stopAudio();
+    super.dispose();
+  }
+
   void _onStepChange(int newIndex) {
-    setState(() => _currentIndex = newIndex);
+    _audio.stopAudio();
+    setState(() {
+      _currentIndex = newIndex;
+      _isSpeaking = false;
+    });
     final saved = Provider.of<SavedLessonsService>(context, listen: false);
     final learning = Provider.of<LearningService>(context, listen: false);
 
@@ -43,10 +58,30 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
     }
   }
 
+  void _speakCurrentStep() {
+    if (_isSpeaking) {
+      _audio.stopAudio();
+      setState(() => _isSpeaking = false);
+      return;
+    }
+
+    final step = widget.lesson.steps[_currentIndex];
+    setState(() => _isSpeaking = true);
+
+    _audio.playAudio(
+      '',
+      fallbackText: step.text,
+      onComplete: () {
+        if (mounted) setState(() => _isSpeaking = false);
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final steps = widget.lesson.steps;
     final saved = Provider.of<SavedLessonsService>(context);
+    final accessibility = Provider.of<AccessibilityService>(context);
     final isBookmarked = saved.isBookmarked(widget.lesson.id);
 
     final imageHeight = (MediaQuery.of(context).size.height * 0.3)
@@ -151,8 +186,9 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
               Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: Colors.grey.shade300),
+                  boxShadow: AppDesign.softShadow,
                 ),
                 padding: const EdgeInsets.all(AppDesign.spaceSmall),
                 child: Column(
@@ -165,22 +201,85 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 10,
+                        horizontal: 14,
+                        vertical: 12,
                       ),
                       decoration: BoxDecoration(
                         color: Colors.grey.shade50,
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(
                         step.text,
                         style: AppDesign.body.copyWith(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
-                          height: 1.3,
+                          height: 1.35,
                         ),
                         textAlign: TextAlign.center,
                       ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // Senior Audio Guidance Bar (TTS)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                decoration: BoxDecoration(
+                  color: _isSpeaking ? Colors.blue.shade100 : Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: _isSpeaking ? Colors.blue.shade600 : Colors.blue.shade200,
+                    width: _isSpeaking ? 2 : 1,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: _isSpeaking ? Colors.blue.shade800 : Colors.blue,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        _isSpeaking ? Icons.graphic_eq : Icons.volume_up,
+                        color: Colors.white,
+                        size: 24,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _isSpeaking ? 'Reading Step Aloud...' : 'Voice Reading Assistance',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue.shade900,
+                            ),
+                          ),
+                          Text(
+                            _isSpeaking
+                                ? 'Listen carefully to the instructions'
+                                : 'Tap Listen if you prefer to hear this step spoken',
+                            style: const TextStyle(fontSize: 12, color: Colors.black54),
+                          ),
+                        ],
+                      ),
+                    ),
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: _isSpeaking ? Colors.red.shade700 : Colors.blue.shade700,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                      icon: Icon(_isSpeaking ? Icons.stop : Icons.play_arrow, size: 20),
+                      label: Text(_isSpeaking ? 'Stop' : 'Listen'),
+                      onPressed: _speakCurrentStep,
                     ),
                   ],
                 ),
@@ -216,7 +315,7 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 12),
 
               // Still Confused? & Practice Mode Buttons
               Row(
@@ -228,7 +327,7 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
                         foregroundColor: Colors.white,
                         minimumSize: const Size(0, 52),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                       ),
                       onPressed: _showConfusedDialog,
@@ -250,7 +349,7 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
                         foregroundColor: Colors.white,
                         minimumSize: const Size(0, 52),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                       ),
                       onPressed: () => Navigator.push(
@@ -384,6 +483,7 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
   }
 
   void _repeatInstruction() {
+    _speakCurrentStep();
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(

@@ -111,13 +111,20 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
                 ),
               ],
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 4),
 
             // High Contrast Quick Toggle
             IconButton(
               tooltip: accessibility.isHighContrast ? 'Disable High Contrast' : 'Enable High Contrast',
               icon: Icon(accessibility.isHighContrast ? Icons.contrast : Icons.contrast_outlined),
               onPressed: () => accessibility.toggleHighContrast(!accessibility.isHighContrast),
+            ),
+
+            // Dark Mode Quick Toggle
+            IconButton(
+              tooltip: accessibility.isDarkMode ? 'Disable Dark Mode' : 'Enable Dark Mode (Eye Comfort)',
+              icon: Icon(accessibility.isDarkMode ? Icons.dark_mode : Icons.light_mode_outlined),
+              onPressed: () => accessibility.toggleDarkMode(!accessibility.isDarkMode),
             ),
 
             // Language Selector Popup
@@ -231,7 +238,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
       ),
       bottomNavigationBar: NavigationBarTheme(
         data: NavigationBarThemeData(
-          height: 72,
+          height: 74,
           indicatorColor: Colors.blue.shade100,
           labelTextStyle: WidgetStateProperty.resolveWith((states) {
             final isSelected = states.contains(WidgetState.selected);

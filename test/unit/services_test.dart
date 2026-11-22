@@ -106,6 +106,19 @@ void main() {
       final theme = acc.themeData;
       expect(theme.primaryColor.toARGB32(), 0xFF000000); // pure black in high contrast
     });
+
+    test('dark mode and speech rate toggles for senior comfort', () {
+      final acc = AccessibilityService();
+      expect(acc.isDarkMode, isFalse);
+      acc.toggleDarkMode(true);
+      expect(acc.isDarkMode, isTrue);
+
+      expect(acc.speechRate, 0.85);
+      acc.toggleSlowSpeech();
+      expect(acc.isSlowSpeech, isTrue);
+      acc.toggleSlowSpeech();
+      expect(acc.isSlowSpeech, isFalse);
+    });
   });
 
   group('UserService', () {
@@ -140,6 +153,17 @@ void main() {
 
       user.logout();
       expect(user.profile.isLoggedIn, isFalse);
+    });
+
+    test('manages trusted family contact and achievement badges', () {
+      final user = UserService();
+      expect(user.profile.familyContactName, 'Daughter Sarah');
+      user.updateFamilyContact('Son David', '+91 99999 00000');
+      expect(user.profile.familyContactName, 'Son David');
+      expect(user.profile.familyContactPhone, '+91 99999 00000');
+
+      user.addBadge('cyber_guardian');
+      expect(user.profile.earnedBadges.contains('cyber_guardian'), isTrue);
     });
   });
 
@@ -187,6 +211,13 @@ void main() {
       final results = search.search(learning);
       expect(results.categories.any((c) => c.title == 'Google Maps'), isTrue);
       expect(results.categories.any((c) => c.title == 'WhatsApp'), isFalse);
+    });
+
+    test('includes Cyber Safety & Scam Shield category with lessons', () {
+      final safetyCat = learning.categories.firstWhere((c) => c.id == 'cat7');
+      expect(safetyCat.title, 'Cyber Safety & Scam Shield');
+      expect(safetyCat.tasks.length, 2);
+      expect(safetyCat.tasks.first.id, 'task_safety_1');
     });
   });
 

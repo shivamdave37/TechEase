@@ -25,7 +25,7 @@ Welcome to the **TechEase** project! This document contains all the essential ar
 * **Storage / Backend Strategy:**
   * Local-first in-memory persistent service architecture (offline capable).
   * Production Firebase configuration ready in `backend/` (`firestore.rules`, `storage.rules`, schema documentation).
-* **Testing:** `flutter_test` suite with 47 unit, widget, and integration tests passing.
+* **Testing:** `flutter_test` suite with 50 unit, widget, and integration tests passing.
 
 ---
 
@@ -62,7 +62,7 @@ elder_smartphone_learning_app/
 │   │   └── main_navigation_shell.dart # Auto-screen adaptation (Laptop Rail vs Mobile BottomBar)
 │   ├── services/                  # Reactive business logic (Audio, Auth, Videos, Groups, etc.)
 │   └── widgets/                   # Reusable components (ZoomableImageViewer, Dialogs, etc.)
-├── test/                          # 47 Unit & Widget tests
+├── test/                          # 50 Unit & Widget tests
 │   ├── unit/                      # Models, services, audio abstraction tests
 │   ├── widget/                    # Navigation, layout, OTP, and recording widget tests
 │   └── widget_test.dart           # End-to-end learning journey test

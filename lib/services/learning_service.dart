@@ -167,6 +167,30 @@ class LearningService extends ChangeNotifier {
       iconName: 'wifi',
       relatedCategory: 'Smartphone Basics',
     ),
+    const GlossaryTerm(
+      id: 'g_otp',
+      term: 'OTP (One-Time Password)',
+      definition: 'A temporary 4 or 6 digit secret code sent to your phone to confirm your identity. Never share it with anyone over the phone.',
+      simpleExample: 'Like a one-time key that only you should use.',
+      iconName: 'lock',
+      relatedCategory: 'Cyber Safety & Scam Shield',
+    ),
+    const GlossaryTerm(
+      id: 'g_phishing',
+      term: 'Scam Link / Phishing',
+      definition: 'A fake web link sent in SMS or WhatsApp designed to steal your passwords or money by pretending to be your bank.',
+      simpleExample: 'A fake message saying "You won prize money, click here". Do not click!',
+      iconName: 'warning',
+      relatedCategory: 'Cyber Safety & Scam Shield',
+    ),
+    const GlossaryTerm(
+      id: 'g_spam',
+      term: 'Spam Call',
+      definition: 'An unwanted phone call from an unknown company or scammer trying to sell you things or trick you.',
+      simpleExample: 'An unknown number offering fake health insurance or claiming your electricity bill is unpaid.',
+      iconName: 'phone_disabled',
+      relatedCategory: 'Cyber Safety & Scam Shield',
+    ),
   ];
 
   static final List<Category> _fallbackCategories = _buildFallbackCategories();
@@ -426,6 +450,72 @@ class LearningService extends ChangeNotifier {
                 "order": 3,
                 "text": "Press Search or Enter on your keyboard to see the results.",
                 "image": "assets/images/internet.png"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "cat7",
+    "title": "Cyber Safety & Scam Shield",
+    "description": "Protect yourself from fake calls, suspicious SMS links, and OTP scams.",
+    "imageAsset": "assets/images/basics.png",
+    "tasks": [
+      {
+        "id": "task_safety_1",
+        "title": "Identify Scam Calls & Fake OTPs",
+        "description": "Learn why you must never share passwords or 4-digit SMS codes.",
+        "lessons": [
+          {
+            "id": "lesson_safety_1",
+            "title": "Protecting Your OTP and Secrets",
+            "description": "Bank officers and police will never ask you for your private OTP codes.",
+            "steps": [
+              {
+                "order": 1,
+                "text": "Never share the 4 or 6 digit OTP (One Time Password) sent to your phone with anyone.",
+                "image": "assets/images/basics.png"
+              },
+              {
+                "order": 2,
+                "text": "Remember that bank officials and police will never ask for your passwords or OTP over the phone.",
+                "image": "assets/images/basics.png"
+              },
+              {
+                "order": 3,
+                "text": "If a caller rushes you or threatens to disconnect your phone or electricity, hang up immediately.",
+                "image": "assets/images/basics.png"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "task_safety_2",
+        "title": "Spotting Suspicious Links & Lottery Messages",
+        "description": "How to handle unexpected messages claiming you won cash or prizes.",
+        "lessons": [
+          {
+            "id": "lesson_safety_2",
+            "title": "Handling Unknown Links in SMS or WhatsApp",
+            "description": "Safe habits when receiving unexpected messages from strangers.",
+            "steps": [
+              {
+                "order": 1,
+                "text": "Do not tap on unexpected links claiming you won a car, money, or lottery.",
+                "image": "assets/images/basics.png"
+              },
+              {
+                "order": 2,
+                "text": "Look closely at the sender. If it is an unknown international number, do not reply.",
+                "image": "assets/images/basics.png"
+              },
+              {
+                "order": 3,
+                "text": "Ask your trusted family member to verify before opening any unknown attachment.",
+                "image": "assets/images/basics.png"
               }
             ]
           }

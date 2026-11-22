@@ -3,10 +3,15 @@ import 'package:material_ui/material_ui.dart';
 class AccessibilityService extends ChangeNotifier {
   double _fontScale = 1.0;
   bool _highContrast = false;
+  bool _isDarkMode = false;
+  double _speechRate = 0.85; // Default gentle, clear pace for elderly listeners
   Color _primaryColor = const Color(0xFF1565C0); // Deep Accessible Blue
 
   double get fontScale => _fontScale;
   bool get isHighContrast => _highContrast;
+  bool get isDarkMode => _isDarkMode;
+  double get speechRate => _speechRate;
+  bool get isSlowSpeech => _speechRate <= 0.8;
   Color get primaryColor => _primaryColor;
 
   static const List<Color> availableThemeColors = [
@@ -39,6 +44,25 @@ class AccessibilityService extends ChangeNotifier {
     notifyListeners();
   }
 
+  void toggleDarkMode(bool enabled) {
+    _isDarkMode = enabled;
+    notifyListeners();
+  }
+
+  void setSpeechRate(double rate) {
+    _speechRate = rate.clamp(0.6, 1.2);
+    notifyListeners();
+  }
+
+  void toggleSlowSpeech() {
+    if (isSlowSpeech) {
+      _speechRate = 1.0;
+    } else {
+      _speechRate = 0.75;
+    }
+    notifyListeners();
+  }
+
   void setPrimaryColor(Color color) {
     _primaryColor = color;
     notifyListeners();
@@ -62,7 +86,7 @@ class AccessibilityService extends ChangeNotifier {
           elevation: 0,
           shape: RoundedRectangleBorder(
             side: BorderSide(color: Colors.black, width: 3),
-            borderRadius: BorderRadius.all(Radius.circular(8)),
+            borderRadius: BorderRadius.all(Radius.circular(10)),
           ),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
@@ -75,6 +99,9 @@ class AccessibilityService extends ChangeNotifier {
               fontWeight: FontWeight.bold,
             ),
             side: const BorderSide(color: Colors.black, width: 2),
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+            ),
           ),
         ),
         outlinedButtonTheme: OutlinedButtonThemeData(
@@ -86,12 +113,70 @@ class AccessibilityService extends ChangeNotifier {
               fontWeight: FontWeight.bold,
             ),
             side: const BorderSide(color: Colors.black, width: 2.5),
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+            ),
           ),
         ),
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.black,
           foregroundColor: Colors.white,
           elevation: 0,
+        ),
+      );
+    }
+
+    if (_isDarkMode) {
+      return ThemeData(
+        brightness: Brightness.dark,
+        scaffoldBackgroundColor: const Color(0xFF0F172A), // Dark Slate
+        primaryColor: _primaryColor,
+        colorScheme: ColorScheme.dark(
+          primary: _primaryColor,
+          surface: const Color(0xFF1E293B),
+          onPrimary: Colors.white,
+          onSurface: Colors.white,
+        ),
+        cardTheme: const CardThemeData(
+          color: Color(0xFF1E293B),
+          elevation: 3,
+          shape: RoundedRectangleBorder(
+            side: BorderSide(color: Color(0xFF334155), width: 1),
+            borderRadius: BorderRadius.all(Radius.circular(14)),
+          ),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: _primaryColor,
+            foregroundColor: Colors.white,
+            minimumSize: const Size(120, 54),
+            textStyle: TextStyle(
+              fontSize: 18 * _fontScale,
+              fontWeight: FontWeight.w600,
+            ),
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+            ),
+          ),
+        ),
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: OutlinedButton.styleFrom(
+            foregroundColor: Colors.white,
+            minimumSize: const Size(120, 54),
+            textStyle: TextStyle(
+              fontSize: 18 * _fontScale,
+              fontWeight: FontWeight.w600,
+            ),
+            side: BorderSide(color: _primaryColor, width: 2),
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+            ),
+          ),
+        ),
+        appBarTheme: AppBarTheme(
+          backgroundColor: const Color(0xFF1E293B),
+          foregroundColor: Colors.white,
+          elevation: 1,
         ),
       );
     }
@@ -108,9 +193,10 @@ class AccessibilityService extends ChangeNotifier {
       cardTheme: CardThemeData(
         color: Colors.white,
         elevation: 2,
+        shadowColor: Colors.black.withValues(alpha: 0.08),
         shape: RoundedRectangleBorder(
-          side: BorderSide(color: Colors.grey.shade300, width: 1),
-          borderRadius: const BorderRadius.all(Radius.circular(12)),
+          side: BorderSide(color: Colors.grey.shade200, width: 1),
+          borderRadius: const BorderRadius.all(Radius.circular(14)),
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -118,12 +204,13 @@ class AccessibilityService extends ChangeNotifier {
           backgroundColor: _primaryColor,
           foregroundColor: Colors.white,
           minimumSize: const Size(120, 54),
+          elevation: 1.5,
           textStyle: TextStyle(
             fontSize: 18 * _fontScale,
             fontWeight: FontWeight.w600,
           ),
           shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
+            borderRadius: BorderRadius.all(Radius.circular(12)),
           ),
         ),
       ),
@@ -137,7 +224,7 @@ class AccessibilityService extends ChangeNotifier {
           ),
           side: BorderSide(color: _primaryColor, width: 2),
           shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
+            borderRadius: BorderRadius.all(Radius.circular(12)),
           ),
         ),
       ),

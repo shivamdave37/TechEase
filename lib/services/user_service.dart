@@ -87,4 +87,21 @@ class UserService extends ChangeNotifier {
     _profile.isAdmin = val;
     notifyListeners();
   }
+
+  void updateFamilyContact(String name, String phone) {
+    if (name.trim().isNotEmpty) {
+      _profile.familyContactName = name.trim();
+    }
+    if (phone.trim().isNotEmpty) {
+      _profile.familyContactPhone = phone.trim();
+    }
+    notifyListeners();
+  }
+
+  void addBadge(String badgeId) {
+    if (!_profile.earnedBadges.contains(badgeId)) {
+      _profile.earnedBadges.add(badgeId);
+      notifyListeners();
+    }
+  }
 }
