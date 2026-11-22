@@ -254,5 +254,71 @@
         ]
       }
     ]
+  },
+  {
+    "id": "cat7",
+    "title": "Cyber Safety & Scam Shield",
+    "description": "Protect yourself from fake calls, suspicious SMS links, and OTP scams.",
+    "imageAsset": "assets/images/basics.png",
+    "tasks": [
+      {
+        "id": "task_safety_1",
+        "title": "Identify Scam Calls & Fake OTPs",
+        "description": "Learn why you must never share passwords or 4-digit SMS codes.",
+        "lessons": [
+          {
+            "id": "lesson_safety_1",
+            "title": "Protecting Your OTP and Secrets",
+            "description": "Bank officers and police will never ask you for your private OTP codes.",
+            "steps": [
+              {
+                "order": 1,
+                "text": "Never share the 4 or 6 digit OTP (One Time Password) sent to your phone with anyone.",
+                "image": "assets/images/basics.png"
+              },
+              {
+                "order": 2,
+                "text": "Remember that bank officials and police will never ask for your passwords or OTP over the phone.",
+                "image": "assets/images/basics.png"
+              },
+              {
+                "order": 3,
+                "text": "If a caller rushes you or threatens to disconnect your phone or electricity, hang up immediately.",
+                "image": "assets/images/basics.png"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "task_safety_2",
+        "title": "Spotting Suspicious Links & Lottery Messages",
+        "description": "How to handle unexpected messages claiming you won cash or prizes.",
+        "lessons": [
+          {
+            "id": "lesson_safety_2",
+            "title": "Handling Unknown Links in SMS or WhatsApp",
+            "description": "Safe habits when receiving unexpected messages from strangers.",
+            "steps": [
+              {
+                "order": 1,
+                "text": "Do not tap on unexpected links claiming you won a car, money, or lottery.",
+                "image": "assets/images/basics.png"
+              },
+              {
+                "order": 2,
+                "text": "Look closely at the sender. If it is an unknown international number, do not reply.",
+                "image": "assets/images/basics.png"
+              },
+              {
+                "order": 3,
+                "text": "Ask your trusted family member to verify before opening any unknown attachment.",
+                "image": "assets/images/basics.png"
+              }
+            ]
+          }
+        ]
+      }
+    ]
   }
 ]

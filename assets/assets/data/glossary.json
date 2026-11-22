@@ -54,5 +54,29 @@
     "simpleExample": "Looks like small curved radio waves in the top corner of your screen.",
     "iconName": "wifi",
     "relatedCategory": "Smartphone Basics"
+  },
+  {
+    "id": "g_otp",
+    "term": "OTP (One-Time Password)",
+    "definition": "A temporary 4 or 6 digit secret code sent to your phone to confirm your identity. Never share it with anyone over the phone.",
+    "simpleExample": "Like a one-time key that only you should use.",
+    "iconName": "lock",
+    "relatedCategory": "Cyber Safety & Scam Shield"
+  },
+  {
+    "id": "g_phishing",
+    "term": "Scam Link / Phishing",
+    "definition": "A fake web link sent in SMS or WhatsApp designed to steal your passwords or money by pretending to be your bank.",
+    "simpleExample": "A fake message saying 'You won prize money, click here'. Do not click!",
+    "iconName": "warning",
+    "relatedCategory": "Cyber Safety & Scam Shield"
+  },
+  {
+    "id": "g_spam",
+    "term": "Spam Call",
+    "definition": "An unwanted phone call from an unknown company or scammer trying to sell you things or trick you.",
+    "simpleExample": "An unknown number offering fake health insurance or claiming your electricity bill is unpaid.",
+    "iconName": "phone_disabled",
+    "relatedCategory": "Cyber Safety & Scam Shield"
   }
 ]
