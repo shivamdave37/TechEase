@@ -1030,7 +1030,7 @@ class _VideoPlayerModalState extends State<_VideoPlayerModal>
                     child: Container(
                       width: 90,
                       height: 90,
-                      decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: Colors.greenAccent.withOpacity(0.4), width: 3)),
+                      decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: const Color(0x6669F0AE), width: 3)),
                     ),
                   ),
                   const CircleAvatar(
@@ -1163,7 +1163,7 @@ class _VideoPlayerModalState extends State<_VideoPlayerModal>
                 decoration: BoxDecoration(
                   color: Colors.greenAccent,
                   boxShadow: [
-                    BoxShadow(color: Colors.greenAccent.withOpacity(0.8), blurRadius: 6, spreadRadius: 2),
+                    BoxShadow(color: const Color(0xCC69F0AE), blurRadius: 6, spreadRadius: 2),
                   ],
                 ),
               ),
@@ -1521,7 +1521,7 @@ class _VideoPlayerModalState extends State<_VideoPlayerModal>
               const SizedBox(height: 6),
               Container(
                 padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(color: Colors.red.withOpacity(0.2), borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.redAccent)),
+                decoration: BoxDecoration(color: const Color(0x33F44336), borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.redAccent)),
                 child: const Text('NEVER share OTP codes or passwords with ANY caller!', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold, fontSize: 13), textAlign: TextAlign.center),
               ),
             ],
@@ -1731,7 +1731,7 @@ class _VideoPlayerModalState extends State<_VideoPlayerModal>
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: Colors.blue.shade900.withOpacity(0.9),
+                            color: const Color(0xE60D47A1),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
