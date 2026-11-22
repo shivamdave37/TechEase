@@ -217,70 +217,7 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-            // Trusted Helper / Family Contact Card
-            Card(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-              color: Colors.green.shade50,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.family_restroom, color: Colors.green.shade800, size: 24),
-                            const SizedBox(width: 8),
-                            const Text(
-                              'Trusted Family Helper',
-                              style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.edit, size: 20, color: Colors.green),
-                          onPressed: () => _showEditFamilyContactDialog(context, user),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      '${user.profile.familyContactName} (${user.profile.familyContactPhone})',
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black87),
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green.shade700,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                            ),
-                            icon: const Icon(Icons.chat, size: 18),
-                            label: const Text('Ask Help on WhatsApp', style: TextStyle(fontSize: 14)),
-                            onPressed: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  backgroundColor: Colors.green.shade800,
-                                  content: Text('Prepared WhatsApp message for ${user.profile.familyContactName}!'),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Learning Achievements & Badges Card
+            // Learning Achievements Card
             Card(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
               color: Colors.blue.shade50,
@@ -299,30 +236,13 @@ class ProfileScreen extends StatelessWidget {
                         Expanded(child: _buildBadge(Icons.thumb_up, 'Community', 'Active Learner')),
                       ],
                     ),
-                    const Divider(height: 24),
-                    const Text(
-                      'Senior Achievements & Badges',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 10),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: const [
-                        _BadgePill(emoji: '🎓', title: 'Tech Starter'),
-                        _BadgePill(emoji: '💬', title: 'WhatsApp Star'),
-                        _BadgePill(emoji: '🛡️', title: 'Scam Shield'),
-                        _BadgePill(emoji: '📷', title: 'Photo Explorer'),
-                        _BadgePill(emoji: '🎙️', title: 'Voice Pioneer'),
-                      ],
-                    ),
                   ],
                 ),
               ),
             ),
             const SizedBox(height: 24),
 
-            // Section: Accessibility Controls
+            // Section: Accessibility Controls (Positioned directly here for immediate visibility & accessibility)
             const Text('Accessibility & View Settings', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const SizedBox(height: 10),
 
@@ -490,6 +410,106 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
 
+            // Trusted Helper / Family Contact Card
+            Card(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              color: Colors.green.shade50,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.family_restroom, color: Colors.green.shade800, size: 24),
+                            const SizedBox(width: 8),
+                            const Text(
+                              'Trusted Family Helper',
+                              style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.edit, size: 20, color: Colors.green),
+                          onPressed: () => _showEditFamilyContactDialog(context, user),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      '${user.profile.familyContactName} (${user.profile.familyContactPhone})',
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black87),
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green.shade700,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                            ),
+                            icon: const Icon(Icons.chat, size: 18),
+                            label: const Text('Ask Help on WhatsApp', style: TextStyle(fontSize: 14)),
+                            onPressed: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  backgroundColor: Colors.green.shade800,
+                                  content: Text('Prepared WhatsApp message for ${user.profile.familyContactName}!'),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Senior Achievements & Badges Showcase Card
+            Card(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              color: Colors.amber.shade50,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: const [
+                        Icon(Icons.military_tech, color: Colors.brown, size: 24),
+                        SizedBox(width: 8),
+                        Text(
+                          'Senior Achievements & Badges',
+                          style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.brown),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: const [
+                        _BadgePill(emoji: '🎓', title: 'Tech Starter'),
+                        _BadgePill(emoji: '💬', title: 'WhatsApp Star'),
+                        _BadgePill(emoji: '🛡️', title: 'Scam Shield'),
+                        _BadgePill(emoji: '📷', title: 'Photo Explorer'),
+                        _BadgePill(emoji: '🎙️', title: 'Voice Pioneer'),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+
             // Navigation Options
             Card(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
@@ -581,7 +601,7 @@ class _BadgePill extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.blue.shade200),
+        border: Border.all(color: Colors.brown.shade200),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
