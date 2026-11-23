@@ -37,7 +37,7 @@ jobs:
         run: flutter test
 
       - name: Build Web Application
-        run: flutter build web --release --base-href /design-thinking-project/
+        run: flutter build web --release --base-href /TechEase/
 
       - name: Copy Data Assets to Web Root
         run: |

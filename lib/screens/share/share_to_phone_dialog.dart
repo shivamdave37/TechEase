@@ -5,9 +5,9 @@ import '../../design_system.dart';
 class ShareToPhoneDialog extends StatelessWidget {
   const ShareToPhoneDialog({Key? key}) : super(key: key);
 
-  static const String publicWebUrl = 'https://shivamdave37.github.io/design-thinking-project/';
+  static const String publicWebUrl = 'https://shivamdave37.github.io/TechEase/';
   static const String localWifiUrl = 'http://192.168.31.71:8080/';
-  static const String apkDownloadUrl = 'https://github.com/shivamdave37/design-thinking-project/releases/latest';
+  static const String apkDownloadUrl = 'https://github.com/shivamdave37/TechEase/releases/latest';
 
   static void show(BuildContext context) {
     showDialog(
@@ -106,7 +106,7 @@ class ShareToPhoneDialog extends StatelessWidget {
                               boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
                             ),
                             child: Image.network(
-                              'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=https://shivamdave37.github.io/design-thinking-project/',
+                              'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=https://shivamdave37.github.io/TechEase/',
                               width: 180,
                               height: 180,
                               fit: BoxFit.contain,

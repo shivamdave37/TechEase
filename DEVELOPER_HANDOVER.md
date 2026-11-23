@@ -8,9 +8,9 @@ Welcome to the **TechEase** project! This document contains all the essential ar
 
 **TechEase** is a senior-first smartphone learning, community video sharing, and voice-group messaging application built in Flutter. It is designed specifically for elderly users who need an intuitive, accessible, and respectful way to master digital skills independently.
 
-* **GitHub Repository:** [https://github.com/shivamdave37/design-thinking-project](https://github.com/shivamdave37/design-thinking-project)
+* **GitHub Repository:** [https://github.com/shivamdave37/TechEase](https://github.com/shivamdave37/TechEase)
 * **Primary Branch:** `master`
-* **Live Web App:** [https://shivamdave37.github.io/design-thinking-project/](https://shivamdave37.github.io/design-thinking-project/)
+* **Live Web App:** [https://shivamdave37.github.io/TechEase/](https://shivamdave37.github.io/TechEase/)
 * **Target Platforms:** Android (Release APK & Google Play ready), Responsive Web (PWA installable on iOS/Android).
 
 ---
@@ -85,8 +85,8 @@ elder_smartphone_learning_app/
 ### Commands:
 ```bash
 # 1. Clone repository
-git clone https://github.com/shivamdave37/design-thinking-project.git
-cd design-thinking-project
+git clone https://github.com/shivamdave37/TechEase.git
+cd TechEase
 
 # 2. Install dependencies
 flutter pub get
@@ -124,7 +124,7 @@ flutter build web --release
 
 The repository has an automated GitHub Actions workflow in `.github/workflows/deploy.yml`:
 1. On every push to `master`, GitHub Actions automatically runs `flutter analyze` and `flutter test`.
-2. It builds the Flutter Web release bundle with base href `/design-thinking-project/`.
+2. It builds the Flutter Web release bundle with base href `/TechEase/`.
 3. It automatically deploys the built web files to the **`gh-pages`** branch.
 4. It compiles a release Android APK (`app-release.apk`) and uploads it as a downloadable GitHub Actions artifact.
 

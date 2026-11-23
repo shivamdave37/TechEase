@@ -3,8 +3,8 @@
 > A respectful, accessible, and intuitive smartphone learning, scam protection, and voice-group application designed specifically for elderly users.
 
 [![Flutter](https://img.shields.io/badge/Flutter-3.50.0-02569B?logo=flutter)](https://flutter.dev)
-[![Tests](https://img.shields.io/badge/Tests-52%20Passed-brightgreen)](https://github.com/shivamdave37/design-thinking-project/actions)
-[![Live Web App](https://img.shields.io/badge/Live-GitHub%20Pages-blue)](https://shivamdave37.github.io/design-thinking-project/)
+[![Tests](https://img.shields.io/badge/Tests-52%20Passed-brightgreen)](https://github.com/shivamdave37/TechEase/actions)
+[![Live Web App](https://img.shields.io/badge/Live-GitHub%20Pages-blue)](https://shivamdave37.github.io/TechEase/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 ---
@@ -34,8 +34,8 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/shivamdave37/design-thinking-project.git
-cd design-thinking-project
+git clone https://github.com/shivamdave37/TechEase.git
+cd TechEase
 
 # Install dependencies
 flutter pub get
@@ -62,5 +62,5 @@ flutter build web --release
 
 ## 🌐 Live Web Links
 
-* **Public Web Link:** [https://shivamdave37.github.io/design-thinking-project/](https://shivamdave37.github.io/design-thinking-project/)
-* **GitHub Repository:** [https://github.com/shivamdave37/design-thinking-project](https://github.com/shivamdave37/design-thinking-project)
+* **Public Web Link:** [https://shivamdave37.github.io/TechEase/](https://shivamdave37.github.io/TechEase/)
+* **GitHub Repository:** [https://github.com/shivamdave37/TechEase](https://github.com/shivamdave37/TechEase)
